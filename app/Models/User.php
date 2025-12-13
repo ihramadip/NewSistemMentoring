@@ -21,6 +21,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role_id',
+        'faculty_id',
+        'gender',
     ];
 
     /**
@@ -32,6 +35,43 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+
+    // Roles & faculty
+    public function role() {
+        return $this->belongsTo(Role::class);
+    }
+    public function faculty() {
+        return $this->belongsTo(Faculty::class);
+    }
+
+    // As mentor
+    public function mentoringGroupsAsMentor() {
+        return $this->hasMany(MentoringGroup::class, 'mentor_id');
+    }
+
+    // As mentee
+    public function mentoringGroupsAsMentee() {
+        return $this->belongsToMany(MentoringGroup::class, 'group_members', 'mentee_id', 'mentoring_group_id')
+                    ->withTimestamps();
+    }
+
+    // Applications
+    public function mentorApplication() {
+        return $this->hasOne(MentorApplication::class);
+    }
+
+    // Attendance & Progress
+    public function attendances() {
+        return $this->hasMany(Attendance::class, 'mentee_id');
+    }
+    public function progressReports() {
+        return $this->hasMany(ProgressReport::class, 'mentee_id');
+    }
+
+    // Announcements
+    public function announcementsAuthored() {
+        return $this->hasMany(Announcement::class, 'author_id');
+    }
 
     /**
      * Get the attributes that should be cast.

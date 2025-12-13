@@ -14,9 +14,12 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('npm')->nullable()->index(); // khusus mentee
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->foreignId('role_id')->constrained('roles')->cascadeOnUpdate()->restrictOnDelete();
+            $table->foreignId('faculty_id')->nullable()->constrained('faculties')->cascadeOnUpdate()->restrictOnDelete(); // untuk mentee
+            $table->enum('gender', ['male', 'female'])->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

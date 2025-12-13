@@ -7,12 +7,12 @@ $stats = [
 ];
 
 $programs = [
-    ['title' => "Mentoring Al-Qur'an", 'emoji' => '📖', 'description' => 'Pendampingan halaqah tematik untuk menguatkan akidah, ibadah, dan adab mahasiswa.', 'link' => '#portal', 'gradient' => 'from-teal-500/20 to-cyan-200/40'],
-    ['title' => 'Pelatihan Pementor', 'emoji' => '🎓', 'description' => 'Bootcamp kompetensi mentoring dan microteaching bersama dosen & trainer nasional.', 'link' => '#blog', 'gradient' => 'from-blue-500/15 to-sky-200/40'],
-    ['title' => 'Kajian Keislaman', 'emoji' => '🕌', 'description' => 'Kuliah umum dengan narasumber inspiratif yang mengaitkan Islam dan isu kampus.', 'link' => '#blog', 'gradient' => 'from-emerald-500/20 to-lime-200/40'],
-    ['title' => 'Humas & Kampanye Digital', 'emoji' => '📣', 'description' => 'Konten edukasi lintas platform untuk menggaungkan nilai Islami yang relevan.', 'link' => '#dokumentasi', 'gradient' => 'from-purple-500/15 to-fuchsia-200/40'],
-    ['title' => 'Penggalangan Sosial', 'emoji' => '🤝', 'description' => 'Gerakan kepedulian (TFM, beasiswa, respon bencana) yang transparan dan akuntabel.', 'link' => '#dokumentasi', 'gradient' => 'from-orange-500/20 to-amber-200/40'],
-    ['title' => 'Kewirausahaan & Sponsor', 'emoji' => '💡', 'description' => 'Unit kreatif untuk produk muslim-friendly dan kemitraan strategis.', 'link' => '#blog', 'gradient' => 'from-indigo-500/20 to-blue-200/40'],
+    ['title' => "Mentoring Al-Qur'an", 'emoji' => '📖', 'description' => 'Pendampingan halaqah tematik untuk menguatkan akidah, ibadah, dan adab mahasiswa.', 'link' => '#portal', 'gradient' => 'from-brand-sky/70 via-brand-mist to-brand-teal/80'],
+    ['title' => 'Pelatihan Pementor', 'emoji' => '🎓', 'description' => 'Bootcamp kompetensi mentoring dan microteaching bersama dosen & trainer nasional.', 'link' => '#blog', 'gradient' => 'from-brand-gold/40 via-brand-sky/45 to-brand-teal/80'],
+    ['title' => 'Kajian Keislaman', 'emoji' => '🕌', 'description' => 'Kuliah umum dengan narasumber inspiratif yang mengaitkan Islam dan isu kampus.', 'link' => '#blog', 'gradient' => 'from-brand-teal/80 via-brand-mist to-brand-gold/45'],
+    ['title' => 'Humas & Kampanye Digital', 'emoji' => '📣', 'description' => 'Konten edukasi lintas platform untuk menggaungkan nilai Islami yang relevan.', 'link' => '#dokumentasi', 'gradient' => 'from-brand-sky/65 via-brand-teal/75 to-brand-mist'],
+    ['title' => 'Penggalangan Sosial', 'emoji' => '🤝', 'description' => 'Gerakan kepedulian (TFM, beasiswa, respon bencana) yang transparan dan akuntabel.', 'link' => '#dokumentasi', 'gradient' => 'from-brand-gold/45 via-brand-mist to-brand-sky/65'],
+    ['title' => 'Kewirausahaan & Sponsor', 'emoji' => '💡', 'description' => 'Unit kreatif untuk produk muslim-friendly dan kemitraan strategis.', 'link' => '#blog', 'gradient' => 'from-brand-teal/75 via-brand-mist to-brand-gold/40'],
 ];
 
 $programDetails = [
@@ -105,10 +105,10 @@ $contacts = [
         <title>BOM-PAI UNISBA — Membina Kepribadian Islami</title>
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-body bg-[#F7F9FA] text-[#0c1b2e]">
+    <body class="font-body bg-brand-mist text-brand-ink">
         <div class="relative overflow-hidden">
-            <div class="absolute inset-x-0 top-0 h-[620px] bg-gradient-to-br from-[#0a2b4e] via-[#0f3f62] to-[#0b5c69] opacity-95"></div>
-            <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(28,167,167,0.25),_transparent_60%)]"></div>
+            <div class="absolute inset-x-0 top-0 h-[620px] bg-gradient-to-br from-brand-ink via-brand-ink/90 to-brand-teal/70 opacity-95"></div>
+            <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(153,238,255,0.22),_transparent_62%)]"></div>
 
             @include('landing.partials.nav')
 

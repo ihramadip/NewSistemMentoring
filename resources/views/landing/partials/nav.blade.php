@@ -17,7 +17,7 @@
             <a href="#alumni" class="hover:text-white">Alumni</a>
             <a href="#kontak" class="hover:text-white">Kontak</a>
         </nav>
-        <a href="#portal" class="hidden rounded-full bg-[#1CA7A7] px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-teal-500/30 transition hover:bg-[#199090] md:inline-block">
+        <a href="#portal" class="hidden rounded-full bg-brand-teal px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-brand-teal/30 transition hover:brightness-90 md:inline-block">
             Masuk Portal Mentoring
         </a>
     </div>
