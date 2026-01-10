@@ -37,6 +37,28 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Mentee Placement Test Routes
+    Route::get('/placement-test/take', [\App\Http\Controllers\PlacementTestSubmissionController::class, 'create'])->name('placement-test.create');
+    Route::post('/placement-test/take', [\App\Http\Controllers\PlacementTestSubmissionController::class, 'store'])->name('placement-test.store');
+
+    // Admin Routes
+    Route::prefix('admin')->name('admin.')->group(function () {
+        Route::resource('faculties', \App\Http\Controllers\Admin\FacultyController::class);
+        Route::resource('levels', \App\Http\Controllers\Admin\LevelController::class);
+        Route::resource('announcements', \App\Http\Controllers\Admin\AnnouncementController::class);
+        Route::resource('materials', \App\Http\Controllers\Admin\MaterialController::class);
+        Route::resource('mentor-applications', \App\Http\Controllers\Admin\MentorApplicationController::class);
+        Route::resource('announcements', \App\Http\Controllers\Admin\AnnouncementController::class);
+        Route::resource('mentees', \App\Http\Controllers\Admin\MenteeController::class)->except(['create', 'store', 'edit', 'update']);
+
+        // Mentee Import Routes
+        Route::get('mentee-import', [\App\Http\Controllers\Admin\MenteeImportController::class, 'create'])->name('mentees.import.create');
+        Route::post('mentee-import', [\App\Http\Controllers\Admin\MenteeImportController::class, 'store'])->name('mentees.import.store');
+        Route::delete('mentees/destroy-all', [\App\Http\Controllers\Admin\MenteeController::class, 'destroyAll'])->name('mentees.destroyAll');
+        Route::get('placement-tests/{placementTest}/audio', [\App\Http\Controllers\Admin\PlacementTestController::class, 'streamAudio'])->name('placement-tests.audio');
+        Route::resource('placement-tests', \App\Http\Controllers\Admin\PlacementTestController::class);
+    });
 });
 
 require __DIR__.'/auth.php';

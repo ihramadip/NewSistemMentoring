@@ -1,10 +1,16 @@
-## Palet warna baru
+# Palet Warna Sistem Mentoring
 
-- `brand-sky`: `#99eeff`
-- `brand-teal`: `#1ca7a7`
-- `brand-gold`: `#d4a017`
-- `brand-mist`: `#f7f9fa`
-- `brand-ink`: `#0f172a`
+Berikut adalah palet warna utama yang digunakan di seluruh sistem untuk menjaga konsistensi visual.
+
+| Nama       | Hex Code  | Utility Class   | Preview                                                                                |
+| :--------- | :-------- | :-------------- | :------------------------------------------------------------------------------------- |
+| **Sky**    | `#99eeff` | `bg-brand-sky`  | <div style="width:100%; height:20px; background-color:#99eeff; border-radius:4px;"></div> |
+| **Teal**   | `#1ca7a7` | `bg-brand-teal` | <div style="width:100%; height:20px; background-color:#1ca7a7; border-radius:4px;"></div> |
+| **Gold**   | `#d4a017` | `bg-brand-gold` | <div style="width:100%; height:20px; background-color:#d4a017; border-radius:4px;"></div> |
+| **Mist**   | `#f7f9fa` | `bg-brand-mist` | <div style="width:100%; height:20px; background-color:#f7f9fa; border-radius:4px; border: 1px solid #ddd;"></div> |
+| **Ink**    | `#0f172a` | `bg-brand-ink`  | <div style="width:100%; height:20px; background-color:#0f172a; border-radius:4px;"></div> |
+
+---
 
 ## File & contoh penerapan
 

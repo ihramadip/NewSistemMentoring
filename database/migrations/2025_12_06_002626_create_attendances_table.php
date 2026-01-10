@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('attendances', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('session_id')->constrained('sessions')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignId('session_id')->constrained('mentoring_sessions')->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignId('mentee_id')->constrained('users')->cascadeOnUpdate()->restrictOnDelete();
             $table->enum('status', ['hadir', 'izin', 'absen'])->default('absen');
             $table->string('notes')->nullable();
