@@ -32,9 +32,16 @@ Route::get('/program/{slug}', function (string $slug) {
     Route::get('/dashboard', [\App\Http\Controllers\MenteeDashboardController::class, 'index'])->middleware(['auth', 'mentee'])->name('dashboard');
 
     // Mentor Dashboard
-    Route::get('/mentor/dashboard', function () {
-        return view('mentor.dashboard');
-    })->middleware(['auth', 'mentor'])->name('mentor.dashboard');
+    Route::get('/mentor/dashboard', [\App\Http\Controllers\Mentor\DashboardController::class, 'index'])
+        ->middleware(['auth', 'mentor'])->name('mentor.dashboard');
+
+    // Mentor Routes
+    Route::prefix('mentor')->name('mentor.')->middleware(['auth', 'mentor'])->group(function () {
+        Route::resource('groups', \App\Http\Controllers\Mentor\GroupController::class);
+        Route::resource('sessions', \App\Http\Controllers\Mentor\SessionController::class);
+        Route::resource('reports', \App\Http\Controllers\Mentor\ProgressReportController::class);
+    });
+
 Route::middleware(['auth', 'mentee'])->group(function () {
     // Mentee Placement Test Routes
     Route::get('/placement-test/take', [\App\Http\Controllers\PlacementTestSubmissionController::class, 'create'])->name('placement-test.create');
@@ -68,6 +75,8 @@ Route::middleware('auth')->group(function () {
 
     // Admin Routes
     Route::prefix('admin')->name('admin.')->middleware(['admin'])->group(function () {
+        Route::get('dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
+        
         Route::resource('faculties', \App\Http\Controllers\Admin\FacultyController::class);
         Route::resource('levels', \App\Http\Controllers\Admin\LevelController::class);
         Route::resource('announcements', \App\Http\Controllers\Admin\AnnouncementController::class);

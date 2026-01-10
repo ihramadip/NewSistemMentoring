@@ -18,7 +18,7 @@
                 $dashboardRoute = 'dashboard'; // Default for mentee
                 if (Auth::check()) {
                     if (Auth::user()->role->name === 'Admin') {
-                        $dashboardRoute = 'admin.faculties.index'; // Or admin dashboard home
+                        $dashboardRoute = 'admin.dashboard';
                     } elseif (Auth::user()->role->name === 'Mentor') {
                         $dashboardRoute = 'mentor.dashboard';
                     }
@@ -63,14 +63,16 @@
                                                         <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m-7.5-2.962A3 3 0 0115 9.185a3 3 0 01-4.5 2.72m-7.5-2.962a3 3 0 00-4.682 2.72 8.982 8.982 0 003.741.479M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                                     </svg>
                                                     <span>Manajemen Kelompok Mentoring</span>
-                                                </a>                                 <a href="#" class="flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-white/10">
-                                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.125 2.25h-4.5c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125v-9M10.125 2.25h.375a9 9 0 019 9v.375M10.125 2.25A3.375 3.375 0 0113.5 5.625v1.5c0 .621.504 1.125 1.125 1.125h1.5a3.375 3.375 0 013.375 3.375M9 15l2.25 2.25L15 12" /></svg>
-                                    <span>Laporan & Statistik</span>
-                                </a>
-                                 <a href="{{ route('admin.announcements.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.announcements.*') ? 'bg-brand-teal' : 'hover:bg-white/10' }}">
-                                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.34 15.84c-.688 0-1.25-.562-1.25-1.25s.562-1.25 1.25-1.25h3.32c.688 0 1.25.562 1.25 1.25s-.562 1.25-1.25 1.25h-3.32zM9 19.5h6" /></svg>
-                                    <span>Pengumuman</span>
-                                </a>            </div>
+                                                </a>
+                                                <a href="#" class="flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-white/10">
+                                                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.125 2.25h-4.5c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125v-9M10.125 2.25h.375a9 9 0 019 9v.375M10.125 2.25A3.375 3.375 0 0113.5 5.625v1.5c0 .621.504 1.125 1.125 1.125h1.5a3.375 3.375 0 013.375 3.375M9 15l2.25 2.25L15 12" /></svg>
+                                                    <span>Laporan & Statistik</span>
+                                                </a>
+                <a href="{{ route('admin.announcements.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.announcements.*') ? 'bg-brand-teal' : 'hover:bg-white/10' }}">
+                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.34 15.84c-.688 0-1.25-.562-1.25-1.25s.562-1.25 1.25-1.25h3.32c.688 0 1.25.562 1.25 1.25s-.562 1.25-1.25 1.25h-3.32zM9 19.5h6" /></svg>
+                    <span>Pengumuman</span>
+                </a>
+            </div>
             
             <div class="mt-4">
                 <h3 class="px-2 text-xs font-semibold uppercase tracking-wider text-white/60">Data Master</h3>
@@ -89,15 +91,26 @@
         @if(Auth::user()->role->name === 'Mentor' || Auth::user()->role->name === 'Admin')
         <!-- Menu Mentor -->
         <div>
-            <h2 class="px-2 text-xs font-semibold uppercase tracking-wider text-white/60">Mentor</h2>
+            <h2 class="px-2 text-xs font-semibold uppercase tracking-wider text-white/60">Navigasi Mentor</h2>
             <div class="mt-1 space-y-1">
-                <a href="#" class="flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-white/10">
-                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.153 1.586m-5.8 0c-.379.39-.75.817-1.084 1.287m1.084-1.287A3 3 0 0113.5 3.75h.618a3 3 0 012.834 2.19m-6.25 16.5A3.375 3.375 0 016.75 18h-1.5a3.375 3.375 0 01-3.375-3.375V6.108c0-1.135.845-2.098 1.976-2.192a48.424 48.424 0 011.123-.08m3.842 16.5-1.084-1.287" /></svg>
-                    <span>Laporan Pertemuan</span>
+                <a href="{{ route('mentor.groups.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('mentor.groups.*') ? 'bg-brand-teal' : 'hover:bg-white/10' }}">
+                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M10 9a3 3 0 100-6 3 3 0 000 6zM6 8a2 2 0 11-4 0 2 2 0 014 0zM1.49 15.326a.78.78 0 01-.358-.442 3 3 0 014.308-3.516 6.484 6.484 0 00-1.905 3.959c-.023.222-.014.442.028.658a.79.79 0 01-.588.792l-.028.008a.786.786 0 01-.766-.36zM14 8a2 2 0 11-4 0 2 2 0 014 0zM10 18a6.484 6.484 0 005.065-2.915 3 3 0 01-4.308-3.516.78.78 0 01.358-.442l.028.008a.79.79 0 01.588.792.786.786 0 01-.766.36 4.486 4.486 0 01-1.905 3.959c-.023.222-.014.442.028.658a.79.79 0 01-.588.792l-.028.008a.786.786 0 01-.766-.36z" />
+                    </svg>
+                    <span>Kelompok Bimbingan</span>
                 </a>
-                <a href="#" class="flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-white/10">
-                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 14.25v2.25m3-4.5v4.5m3-6.75v6.75m3-9v9M6 20.25h12A2.25 2.25 0 0020.25 18V6A2.25 2.25 0 0018 3.75H6A2.25 2.25 0 003.75 6v12A2.25 2.25 0 006 20.25z" /></svg>
-                    <span>Progress Mentee</span>
+                <a href="{{ route('mentor.sessions.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('mentor.sessions.*') ? 'bg-brand-teal' : 'hover:bg-white/10' }}">
+                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v1.755S5.47 5.1 7 5.914V4a1 1 0 112 0v1.914S10.47 5.1 12 5.914V4a1 1 0 112 0v1.914S15.47 5.1 17 5.914V4a1 1 0 112 0v2.414c0 .265-.105.52-.293.707l-2.414 2.414-2.415-2.414a1 1 0 01-.292-.707V4a1 1 0 10-2 0v1.914S10.47 5.1 12 5.914V4a1 1 0 10-2 0v1.914S8.47 5.1 7 5.914V4a1 1 0 00-2 0v1.914S3.47 5.1 2 5.914V3a1 1 0 011-1zm0 8a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zm0 4a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1z" clip-rule="evenodd" />
+                    </svg>
+                    <span>Sesi & Laporan</span>
+                </a>
+                <a href="{{ route('mentor.reports.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('mentor.reports.*') ? 'bg-brand-teal' : 'hover:bg-white/10' }}">
+                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M10.75 2.75a.75.75 0 00-1.5 0v8.5a.75.75 0 001.5 0v-8.5zM10 20a9.5 9.5 0 100-19 9.5 9.5 0 000 19zM10 1.5a8 8 0 110 16 8 8 0 010-16z" />
+                        <path d="M13.28 5.72a.75.75 0 00-1.06-1.06l-4.5 4.5a.75.75 0 000 1.06l4.5 4.5a.75.75 0 101.06-1.06L9.28 10.5l4-4.78z" />
+                    </svg>
+                    <span>Progres Mentee</span>
                 </a>
             </div>
         </div>

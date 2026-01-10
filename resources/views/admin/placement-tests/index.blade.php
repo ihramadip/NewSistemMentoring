@@ -1,8 +1,12 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Placement Test Results') }}
-        </h2>
+        <x-page-header title="{{ __('Hasil Placement Test') }}" subtitle="Nilai dan tentukan level untuk setiap mentee berdasarkan hasil tes.">
+            <x-slot name="icon">
+                <svg class="h-8 w-8" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a5.25 5.25 0 015.25 5.25c0 3.866-3.134 7-7 7a7.001 7.001 0 01-5.032-1.928l-1.47 1.47A1.5 1.5 0 013 18.75V4.5A1.5 1.5 0 014.5 3h11.25A1.5 1.5 0 0117.25 4.5v1.875c-.21-.06-.427-.105-.648-.138" />
+                </svg>
+            </x-slot>
+        </x-page-header>
     </x-slot>
 
     <div class="py-12">

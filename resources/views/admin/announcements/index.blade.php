@@ -1,8 +1,17 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Manajemen Pengumuman') }}
-        </h2>
+        <x-page-header title="{{ __('Manajemen Pengumuman') }}" subtitle="Buat dan kelola pengumuman untuk mentor, mentee, atau semua pengguna.">
+            <x-slot name="icon">
+                <svg class="h-8 w-8" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m6.75 12.75h-3.375M12 17.25a3.375 3.375 0 01-3.375-3.375v-1.5a1.125 1.125 0 011.125-1.125h3.375m-3.375 0s-1.125.225-1.125 1.125v1.5a3.375 3.375 0 01-3.375 3.375m0-12.75h3.375" />
+                </svg>
+            </x-slot>
+            <x-slot name="actions">
+                <x-primary-button href="{{ route('admin.announcements.create') }}">
+                    {{ __('Buat Pengumuman') }}
+                </x-primary-button>
+            </x-slot>
+        </x-page-header>
     </x-slot>
 
     <div class="py-12">

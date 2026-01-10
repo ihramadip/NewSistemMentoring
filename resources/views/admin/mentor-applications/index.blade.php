@@ -1,78 +1,93 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Mentor Applications') }}
-        </h2>
+        <x-page-header title="{{ __('Manajemen Pendaftaran Mentor') }}" subtitle="Kelola daftar aplikasi pendaftaran mentor yang masuk.">
+            <x-slot name="icon">
+                <svg class="h-8 w-8" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m-7.5-2.962A3 3 0 0115 9.185a3 3 0 01-4.5 2.72m-7.5-2.962a3 3 0 00-4.682 2.72 8.982 8.982 0 003.741.479M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </x-slot>
+        </x-page-header>
     </x-slot>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    <h3 class="text-lg font-medium text-gray-900 mb-4">All Mentor Applications</h3>
 
-                    @if(session('success'))
-                        <div class="bg-teal-100 border border-teal-400 text-teal-700 px-4 py-3 rounded relative mb-4" role="alert">
+                    @if (session('success'))
+                        <div class="bg-teal-100 border border-teal-400 text-teal-700 px-4 py-3 rounded relative mb-4"
+                            role="alert">
                             <span class="block sm:inline">{{ session('success') }}</span>
                         </div>
                     @endif
 
                     <div class="overflow-x-auto">
                         <table class="min-w-full">
-                            <thead>
+                            <thead class="border-b">
                                 <tr>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Applicant Name
-                                    </th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        CV
-                                    </th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Recording
-                                    </th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Status
-                                    </th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Applied On
-                                    </th>
-                                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Actions
-                                    </th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Nama Pendaftar</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Email</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Status</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Tanggal Daftar</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse ($applications as $application)
-                                    <tr class="@if($loop->even) bg-brand-mist @endif border-b border-gray-200 hover:bg-brand-sky/40">
+                                    <tr
+                                        class="@if ($loop->even) bg-brand-mist @endif border-b border-gray-200 hover:bg-brand-sky/40">
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                            {{ $application->user->name }}
-                                        </td>
+                                            {{ $application->user->name }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            <a href="{{ Storage::url($application->cv_path) }}" target="_blank" class="text-brand-teal hover:underline">View CV</a>
+                                            {{ $application->user->email }}
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            <a href="{{ Storage::url($application->recording_path) }}" target="_blank" class="text-brand-teal hover:underline">Listen Recording</a>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">
-                                            {{ $application->status }}
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                            @php
+                                                $statusClass = '';
+                                                if ($application->status == 'pending') {
+                                                    $statusClass = 'bg-yellow-100 text-yellow-800';
+                                                } elseif ($application->status == 'accepted') {
+                                                    $statusClass = 'bg-green-100 text-green-800';
+                                                } elseif ($application->status == 'rejected') {
+                                                    $statusClass = 'bg-red-100 text-red-800';
+                                                }
+                                            @endphp
+                                            <span
+                                                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $statusClass }}">
+                                                {{ $application->status }}
+                                            </span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                             {{ $application->created_at->format('d M Y') }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                            <a href="{{ route('admin.mentor-applications.show', $application) }}" class="text-indigo-600 hover:text-indigo-900 mr-3">View</a>
-                                            <a href="{{ route('admin.mentor-applications.edit', $application) }}" class="text-brand-teal hover:text-brand-gold mr-3">Edit</a>
-                                            <form action="{{ route('admin.mentor-applications.destroy', $application) }}" method="POST" class="inline">
+                                            <a href="{{ route('admin.mentor-applications.edit', $application) }}"
+                                                class="text-indigo-600 hover:text-indigo-900 mr-3">Nilai</a>
+                                            <form
+                                                action="{{ route('admin.mentor-applications.destroy', $application) }}"
+                                                method="POST" class="inline">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('Are you sure you want to delete this application?')">Delete</button>
+                                                <button type="submit" class="text-red-600 hover:text-red-900"
+                                                    onclick="return confirm('Yakin ingin menghapus pendaftaran ini?')">Hapus</button>
                                             </form>
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-500">
-                                            No mentor applications found.
+                                        <td colspan="5"
+                                            class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                                            Belum ada data pendaftaran mentor.
                                         </td>
                                     </tr>
                                 @endforelse

@@ -1,8 +1,23 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Manajemen Mentee') }}
-        </h2>
+        <x-page-header title="{{ __('Manajemen Mentee') }}" subtitle="Lihat, cari, dan kelola semua data mentee yang terdaftar di sistem.">
+            <x-slot name="icon">
+                <svg class="h-8 w-8" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-4.67c.12-.313.253-.617.4-1.022a4.125 4.125 0 00-7.533-2.493c-3.693 0-6.105 2.818-6.105 6.375a6.375 6.375 0 004.121 5.952v-.003c1.113 0 2.16-.285 3.07-.786z" />
+                </svg>
+            </x-slot>
+            <x-slot name="actions">
+                <form method="POST" action="{{ route('admin.mentees.destroyAll') }}" class="inline">
+                    @csrf
+                    <button type="submit" class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-500 active:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150" onclick="return confirm('APAKAH ANDA YAKIN? Tindakan ini akan menghapus SEMUA data mentee dan tidak dapat dikembalikan.')">
+                        {{ __('Hapus Semua Mentee') }}
+                    </button>
+                </form>
+                <x-primary-button href="{{ route('admin.mentees.import.create') }}">
+                    {{ __('Impor Mentee') }}
+                </x-primary-button>
+            </x-slot>
+        </x-page-header>
     </x-slot>
 
     <div class="py-12">

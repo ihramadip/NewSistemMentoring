@@ -1,8 +1,20 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Grade Placement Test') }}
-        </h2>
+        <x-page-header title="{{ __('Nilai Placement Test') }}" subtitle="Menilai hasil tes untuk mentee '{{ $placementTest->mentee->name }}'.">
+            <x-slot name="icon">
+                <svg class="h-8 w-8" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a5.25 5.25 0 015.25 5.25c0 3.866-3.134 7-7 7a7.001 7.001 0 01-5.032-1.928l-1.47 1.47A1.5 1.5 0 013 18.75V4.5A1.5 1.5 0 014.5 3h11.25A1.5 1.5 0 0117.25 4.5v1.875c-.21-.06-.427-.105-.648-.138" />
+                </svg>
+            </x-slot>
+            <x-slot name="actions">
+                <a href="{{ route('admin.placement-tests.index') }}" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">
+                    <svg class="h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clip-rule="evenodd" />
+                    </svg>
+                    Kembali
+                </a>
+            </x-slot>
+        </x-page-header>
     </x-slot>
 
     <div class="py-12">

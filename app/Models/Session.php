@@ -14,7 +14,7 @@ class Session extends Model
         'date' => 'datetime',
     ];
 
-    public function group() {
+    public function mentoringGroup() {
         return $this->belongsTo(MentoringGroup::class, 'mentoring_group_id');
     }
     public function attendances() {
