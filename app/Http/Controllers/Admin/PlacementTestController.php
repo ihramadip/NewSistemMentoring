@@ -90,10 +90,10 @@ class PlacementTestController extends Controller
      */
     public function streamAudio(PlacementTest $placementTest)
     {
-        if (!$placementTest->audio_recording_path || !Storage::disk('private')->exists($placementTest->audio_recording_path)) {
+        if (!$placementTest->audio_recording_path || !Storage::disk('local')->exists($placementTest->audio_recording_path)) {
             abort(404, 'Audio file not found.');
         }
 
-        return Storage::disk('private')->response($placementTest->audio_recording_path);
+        return Storage::disk('local')->response($placementTest->audio_recording_path);
     }
 }

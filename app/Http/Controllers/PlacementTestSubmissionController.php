@@ -66,7 +66,7 @@ class PlacementTestSubmissionController extends Controller
 
 
         // --- Audio File Handling ---
-        $path = $request->file('audio_recording')->store('placement-tests/audio', 'private');
+        $path = $request->file('audio_recording')->store('placement-tests/audio', 'local');
 
 
         // --- Create Placement Test Record ---

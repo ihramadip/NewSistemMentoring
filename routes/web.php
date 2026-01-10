@@ -29,21 +29,45 @@ Route::get('/program/{slug}', function (string $slug) {
     ]);
 })->name('program.show');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+    Route::get('/dashboard', [\App\Http\Controllers\MenteeDashboardController::class, 'index'])->middleware(['auth', 'mentee'])->name('dashboard');
+
+    // Mentor Dashboard
+    Route::get('/mentor/dashboard', function () {
+        return view('mentor.dashboard');
+    })->middleware(['auth', 'mentor'])->name('mentor.dashboard');
+Route::middleware(['auth', 'mentee'])->group(function () {
+    // Mentee Placement Test Routes
+    Route::get('/placement-test/take', [\App\Http\Controllers\PlacementTestSubmissionController::class, 'create'])->name('placement-test.create');
+    Route::post('/placement-test/take', [\App\Http\Controllers\PlacementTestSubmissionController::class, 'store'])->name('placement-test.store');
+    
+    // Mentee Materials
+    Route::get('/materials', [\App\Http\Controllers\MenteeMaterialController::class, 'index'])->name('mentee.materials.index');
+
+    // Mentee Announcements
+    Route::get('/announcements', [\App\Http\Controllers\MenteeAnnouncementController::class, 'index'])->name('mentee.announcements.index');
+
+    // Mentee Group
+    Route::get('/group', [\App\Http\Controllers\MenteeGroupController::class, 'index'])->name('mentee.group.index');
+
+    // Mentee Sessions
+    Route::get('/sessions', [\App\Http\Controllers\MenteeSessionController::class, 'index'])->name('mentee.sessions.index');
+
+    // Mentee Report
+    Route::get('/report', [\App\Http\Controllers\MenteeReportController::class, 'index'])->name('mentee.report.index');
+
+    // Mentee Exams
+    Route::get('/exams', [\App\Http\Controllers\MenteeExamController::class, 'index'])->name('mentee.exams.index');
+    Route::get('/exams/{exam}', [\App\Http\Controllers\MenteeExamController::class, 'show'])->name('mentee.exams.show');
+    Route::post('/exams/{exam}/submit', [\App\Http\Controllers\MenteeExamController::class, 'store'])->name('mentee.exams.store');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Mentee Placement Test Routes
-    Route::get('/placement-test/take', [\App\Http\Controllers\PlacementTestSubmissionController::class, 'create'])->name('placement-test.create');
-    Route::post('/placement-test/take', [\App\Http\Controllers\PlacementTestSubmissionController::class, 'store'])->name('placement-test.store');
-
     // Admin Routes
-    Route::prefix('admin')->name('admin.')->group(function () {
+    Route::prefix('admin')->name('admin.')->middleware(['admin'])->group(function () {
         Route::resource('faculties', \App\Http\Controllers\Admin\FacultyController::class);
         Route::resource('levels', \App\Http\Controllers\Admin\LevelController::class);
         Route::resource('announcements', \App\Http\Controllers\Admin\AnnouncementController::class);
@@ -58,6 +82,9 @@ Route::middleware('auth')->group(function () {
         Route::delete('mentees/destroy-all', [\App\Http\Controllers\Admin\MenteeController::class, 'destroyAll'])->name('mentees.destroyAll');
         Route::get('placement-tests/{placementTest}/audio', [\App\Http\Controllers\Admin\PlacementTestController::class, 'streamAudio'])->name('placement-tests.audio');
         Route::resource('placement-tests', \App\Http\Controllers\Admin\PlacementTestController::class);
+        Route::resource('mentoring-groups', \App\Http\Controllers\Admin\MentoringGroupController::class);
+        Route::resource('exams', \App\Http\Controllers\Admin\ExamController::class);
+        Route::resource('exams.questions', \App\Http\Controllers\Admin\QuestionController::class);
     });
 });
 

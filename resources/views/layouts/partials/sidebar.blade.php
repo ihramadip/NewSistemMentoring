@@ -2,7 +2,7 @@
     <!-- Logo -->
     <a href="{{ route('dashboard') }}" class="flex items-center gap-3 p-6">
         <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10">
-            <img src="/images/bompai.png" alt="Logo" class="h-10 w-10 object-contain">
+            <img src="/images/bompai.png" alt="Logo" class="h-10 w-12 object-contain">
         </div>
         <div>
             <p class="text-xs uppercase tracking-[0.4em] text-white/70">BOM-PAI</p>
@@ -14,12 +14,24 @@
         <!-- Dashboard -->
         <div>
             <h2 class="px-2 text-xs font-semibold uppercase tracking-wider text-white/60">Utama</h2>
-            <a href="{{ route('dashboard') }}" class="mt-1 flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('dashboard') ? 'bg-brand-teal' : 'hover:bg-white/10' }}">
+            @php
+                $dashboardRoute = 'dashboard'; // Default for mentee
+                if (Auth::check()) {
+                    if (Auth::user()->role->name === 'Admin') {
+                        $dashboardRoute = 'admin.faculties.index'; // Or admin dashboard home
+                    } elseif (Auth::user()->role->name === 'Mentor') {
+                        $dashboardRoute = 'mentor.dashboard';
+                    }
+                }
+            @endphp
+            <a href="{{ route($dashboardRoute) }}" class="mt-1 flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs($dashboardRoute) ? 'bg-brand-teal' : 'hover:bg-white/10' }}">
                 <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25a2.25 2.25 0 01-2.25-2.25v-2.25z" /></svg>
                 <span>Dashboard</span>
             </a>
         </div>
 
+        @auth
+        @if(Auth::user()->role->name === 'Admin')
         <!-- Menu Admin -->
         <div>
             <h2 class="px-2 text-xs font-semibold uppercase tracking-wider text-white/60">Admin</h2>
@@ -39,7 +51,19 @@
                                                  <a href="{{ route('admin.materials.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.materials.*') ? 'bg-brand-teal' : 'hover:bg-white/10' }}">
                                                      <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 1.087M3.75 9h16.5" /></svg>
                                                      <span>Manajemen Materi</span>
-                                                 </a>                                 <a href="#" class="flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-white/10">
+                                                 </a>
+                                                 <a href="{{ route('admin.exams.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.exams.*') ? 'bg-brand-teal' : 'hover:bg-white/10' }}">
+                                                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12H12m-2.25 4.5H12M12 18.75V15m-1.5 2.25l-1.5-1.5m1.5 1.5l1.5-1.5M12 18.75L10.5 17.25M12 18.75L13.5 17.25M12 14.25h-2.25M15 11.25H9M15 12h-2.25" />
+                                                    </svg>
+                                                    <span>Manajemen Ujian</span>
+                                                </a>
+                                                <a href="{{ route('admin.mentoring-groups.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.mentoring-groups.*') ? 'bg-brand-teal' : 'hover:bg-white/10' }}">
+                                                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m-7.5-2.962A3 3 0 0115 9.185a3 3 0 01-4.5 2.72m-7.5-2.962a3 3 0 00-4.682 2.72 8.982 8.982 0 003.741.479M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                    </svg>
+                                                    <span>Manajemen Kelompok Mentoring</span>
+                                                </a>                                 <a href="#" class="flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-white/10">
                                     <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.125 2.25h-4.5c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125v-9M10.125 2.25h.375a9 9 0 019 9v.375M10.125 2.25A3.375 3.375 0 0113.5 5.625v1.5c0 .621.504 1.125 1.125 1.125h1.5a3.375 3.375 0 013.375 3.375M9 15l2.25 2.25L15 12" /></svg>
                                     <span>Laporan & Statistik</span>
                                 </a>
@@ -60,7 +84,9 @@
                 </a>
             </div>
         </div>
+        @endif
 
+        @if(Auth::user()->role->name === 'Mentor' || Auth::user()->role->name === 'Admin')
         <!-- Menu Mentor -->
         <div>
             <h2 class="px-2 text-xs font-semibold uppercase tracking-wider text-white/60">Mentor</h2>
@@ -75,26 +101,50 @@
                 </a>
             </div>
         </div>
+        @endif
 
+        @if(Auth::user()->role->name === 'Mentee' || Auth::user()->role->name === 'Admin')
         <!-- Menu Mentee -->
         <div>
             <h2 class="px-2 text-xs font-semibold uppercase tracking-wider text-white/60">Mentee</h2>
             <div class="mt-1 space-y-1">
-                <a href="#" class="flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-white/10">
-                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg>
-                    <span>Jadwal & Sesi</span>
-                </a>
-                <a href="#" class="flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-white/10">
+
+                <a href="{{ route('mentee.materials.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('mentee.materials.index') ? 'bg-brand-teal' : 'hover:bg-white/10' }}">
                     <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg>
                     <span>Materi Belajar</span>
                 </a>
-                <a href="#" class="flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-white/10">
-                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0l-3.32-3.319A6.375 6.375 0 016.75 4.5h10.5a6.375 6.375 0 014.567 2.328l-3.32 3.319m-3.247 3.742c-.21.242-.42.48-.633.712A6.746 6.746 0 0012 15.54a6.746 6.746 0 00-1.897-2.343c-.213-.232-.423-.47-.633-.712m3.794 0V12h-3v-1.258h3z" /></svg>
-                    <span>Ujian Akhir</span>
+                <a href="{{ route('mentee.announcements.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('mentee.announcements.index') ? 'bg-brand-teal' : 'hover:bg-white/10' }}">
+                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.34 15.84c-.688 0-1.25-.562-1.25-1.25s.562-1.25 1.25-1.25h3.32c.688 0 1.25.562 1.25 1.25s-.562 1.25-1.25 1.25h-3.32zM9 19.5h6" /></svg>
+                    <span>Pengumuman</span>
+                </a>
+                <a href="{{ route('mentee.group.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('mentee.group.index') ? 'bg-brand-teal' : 'hover:bg-white/10' }}">
+                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m-7.5-2.962A3 3 0 0115 9.185a3 3 0 01-4.5 2.72m-7.5-2.962a3 3 0 00-4.682 2.72 8.982 8.982 0 003.741.479M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <span>Kelompok Mentoring Saya</span>
+                </a>
+                <a href="{{ route('mentee.sessions.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('mentee.sessions.index') ? 'bg-brand-teal' : 'hover:bg-white/10' }}">
+                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg>
+                    <span>Sesi Mentoring Saya</span>
+                </a>
+                <a href="{{ route('mentee.report.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('mentee.report.index') ? 'bg-brand-teal' : 'hover:bg-white/10' }}">
+                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg>
+                    <span>Laporan Hasil Mentoring</span>
+                </a>
+                <a href="{{ route('mentee.exams.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('mentee.exams.index') ? 'bg-brand-teal' : 'hover:bg-white/10' }}">
+                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12H12m-2.25 4.5H12M12 18.75V15m-1.5 2.25l-1.5-1.5m1.5 1.5l1.5-1.5M12 18.75L10.5 17.25M12 18.75L13.5 17.25M12 14.25h-2.25M15 11.25H9M15 12h-2.25" />
+                    </svg>
+                    <span>Ujian Saya</span>
+                </a>
+
+                <a href="{{ route('placement-test.create') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('placement-test.create') ? 'bg-brand-teal' : 'hover:bg-white/10' }}">
+                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 100 15 7.5 7.5 0 000-15z" /><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.25-5.25" /></svg>
+                    <span>Ikuti Placement Test</span>
                 </a>
             </div>
         </div>
+        @endif
 
+        {{-- Visible to all authenticated users --}}
         <!-- Menu Umum -->
         <div>
             <h2 class="px-2 text-xs font-semibold uppercase tracking-wider text-white/60">Umum</h2>
@@ -105,5 +155,6 @@
                 </a>
             </div>
         </div>
+        @endauth
     </nav>
 </aside>

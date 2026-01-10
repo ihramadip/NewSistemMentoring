@@ -28,6 +28,17 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        $user = $request->user();
+
+        if ($user->role->name === 'Admin') {
+            return redirect()->route('admin.faculties.index');
+        }
+
+        if ($user->role->name === 'Mentor') {
+            return redirect()->route('mentor.dashboard');
+        }
+
+        // Default redirect for Mentees or other roles
         return redirect()->intended(route('dashboard', absolute: false));
     }
 
