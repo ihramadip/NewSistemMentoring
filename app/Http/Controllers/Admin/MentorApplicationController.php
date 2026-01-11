@@ -4,7 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\MentorApplication;
+use App\Mail\MentorApplicationApproved;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str; // For pathinfo_extension
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Storage; // Added for file management
 
@@ -68,10 +72,108 @@ class MentorApplicationController extends Controller
             'notes_from_reviewer' => ['nullable', 'string'],
         ]);
 
-        $mentorApplication->update($request->all());
+        $originalStatus = $mentorApplication->status;
+
+        $mentorApplication->update($request->only('status', 'notes_from_reviewer'));
+
+        // If status is changed to 'accepted', update role and send email
+        if ($request->status == 'accepted' && $originalStatus != 'accepted') {
+            $mentorRole = \App\Models\Role::where('name', 'mentor')->first();
+            if ($mentorRole) {
+                $user = $mentorApplication->user;
+                $user->role_id = $mentorRole->id;
+                $user->save();
+
+                // Send approval email
+                Mail::to($user->email)->send(new MentorApplicationApproved($user));
+            }
+        }
 
         return redirect()->route('admin.mentor-applications.index')
                          ->with('success', 'Mentor application updated successfully.');
+    }
+
+    /**
+     * Stream the audio recording for the specified application.
+     */
+    public function streamAudio(MentorApplication $mentorApplication)
+    {
+        $path = $mentorApplication->recording_path;
+        
+        // Early exit if path is null or empty
+        if (empty($path)) {
+            Log::error("Audio streaming failed: recording_path is null or empty for application ID {$mentorApplication->id}");
+            abort(404, 'Audio file path is missing.');
+        }
+
+        Log::info("Attempting to stream audio from path: {$path} for application ID {$mentorApplication->id}");
+
+        if (str_contains($path, '..')) {
+            Log::warning("Audio streaming blocked due to path traversal attempt: {$path}");
+            abort(403, 'Invalid path specified.');
+        }
+
+        if (!Storage::exists($path)) {
+            Log::error("Audio file not found at path: {$path} for application ID {$mentorApplication->id}");
+            abort(404, 'Audio file not found.');
+        }
+
+        $fileContents = Storage::get($path);
+        $detectedMimeType = Storage::mimeType($path);
+        $fileSize = Storage::size($path);
+        $extension = Str::afterLast($path, '.');
+
+        // Explicitly set MIME type for common audio formats
+        $mimeType = match ($extension) {
+            'mp3' => 'audio/mpeg',
+            'wav' => 'audio/wav',
+            'm4a' => 'audio/mp4',
+            default => $detectedMimeType ?: 'application/octet-stream',
+        };
+        
+        Log::info("Streaming audio: Path={$path}, Exists=true, MIME={$mimeType}, Size={$fileSize} for application ID {$mentorApplication->id}");
+
+        return response($fileContents)
+            ->header('Content-Type', $mimeType)
+            ->header('Content-Length', $fileSize)
+            ->header('Accept-Ranges', 'bytes');
+    }
+
+    /**
+     * Stream the CV for the specified application.
+     */
+    public function streamCv(MentorApplication $mentorApplication)
+    {
+        $path = $mentorApplication->cv_path;
+        
+        // Early exit if path is null or empty
+        if (empty($path)) {
+            Log::error("CV streaming failed: cv_path is null or empty for application ID {$mentorApplication->id}");
+            abort(404, 'CV file path is missing.');
+        }
+
+        Log::info("Attempting to stream CV from path: {$path} for application ID {$mentorApplication->id}");
+
+        if (str_contains($path, '..')) {
+            Log::warning("CV streaming blocked due to path traversal attempt: {$path}");
+            abort(403, 'Invalid path specified.');
+        }
+
+        if (!Storage::exists($path)) {
+            Log::error("CV file not found at path: {$path} for application ID {$mentorApplication->id}");
+            abort(404, 'CV file not found.');
+        }
+
+        $fileContents = Storage::get($path);
+        $mimeType = Storage::mimeType($path) ?: 'application/pdf'; // Default to application/pdf
+        $fileSize = Storage::size($path);
+
+        Log::info("Streaming CV: Path={$path}, Exists=true, MIME={$mimeType}, Size={$fileSize} for application ID {$mentorApplication->id}");
+
+        return response($fileContents)
+            ->header('Content-Type', $mimeType)
+            ->header('Content-Length', $fileSize)
+            ->header('Content-Disposition', 'inline; filename="' . basename($path) . '"'); // Suggest browser to display inline
     }
 
     /**

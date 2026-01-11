@@ -19,11 +19,55 @@ Berikut adalah ringkasan progres fitur yang sudah dan belum dikerjakan:
         *   Memperbaiki `BadMethodCallException` dengan mengganti nama relasi di model `Session` dari `group()` menjadi `mentoringGroup()` agar konsisten.
         *   Memperbaiki link "Dashboard" di sidebar admin agar mengarah ke route yang benar.
         *   Memperbaiki alur pengalihan (redirect) setelah admin login agar langsung menuju ke dashboard admin.
-
----
-
-## Fitur yang Sudah Selesai (Sesi 1):
-
+        
+        ---
+        
+        ## Progres Terbaru (Updated: 11 Jan 2026 - Sesi 3)
+        
+        ### Fitur Pendaftaran dan Seleksi Pementor (End-to-End)
+        
+        *   **Manajemen Seleksi Pementor (Admin)**
+            *   **Peningkatan Controller (`Admin\MentorApplicationController.php`):**
+                *   Metode `update()` sekarang otomatis mengubah `role_id` pengguna menjadi 'mentor' jika aplikasi disetujui, dan hanya akan mengirim email jika status *berubah* menjadi 'accepted'.
+                *   Metode `streamAudio()` dan `streamCv()` ditingkatkan untuk melayani file secara lebih robust dengan header HTTP yang eksplisit (`Content-Type`, `Content-Length`, `Accept-Ranges`, `Content-Disposition`) dan penanganan `null` path yang lebih baik.
+            *   **Perubahan View Admin:**
+                *   `admin/mentor-applications/edit.blade.php` diubah menjadi halaman review terpadu (menggabungkan detail dan form penilaian).
+                *   Teks tautan di `admin/mentor-applications/index.blade.php` diubah menjadi "Review & Nilai".
+            *   **Route Baru:** Menambahkan route `GET` untuk streaming audio dan CV secara aman (`admin.mentor-applications.audio`, `admin.mentor-applications.cv`).
+        
+        *   **Pendaftaran Pementor Publik (Frontend)**
+            *   **Controller (`MentorRegistrationController.php`):** Dibuat untuk menangani tampilan form (`create()`) dan proses submit (`store()`) pendaftaran calon pementor. Termasuk validasi data, upload file ke penyimpanan privat, dan pembuatan `User` (default role 'mentee') serta `MentorApplication`.
+            *   **Route:** Dua route publik (`GET /daftar-pementor` dan `POST /daftar-pementor`) didaftarkan.
+            *   **View (`mentor-registration/create.blade.php`):** Dibuat sebagai formulir pendaftaran lengkap.
+        
+        *   **Notifikasi Pop-up Pendaftaran & Email Persetujuan**
+            *   **Notifikasi Pop-up:** Setelah pendaftaran berhasil, pengguna diarahkan kembali ke halaman pendaftaran dengan pesan sukses. Halaman `mentor-registration/create.blade.php` kini menampilkan modal sukses (menggunakan Alpine.js) yang memberitahukan pengguna untuk menunggu email persetujuan, menggantikan tampilan form.
+            *   **Email Persetujuan:**
+                *   Mailable `app/Mail/MentorApplicationApproved.php` dan view email `resources/views/emails/mentor-application-approved.blade.php` dibuat.
+                *   Logika pengiriman email diimplementasikan di `Admin\MentorApplicationController.php` (`update()` method) untuk mengirim email ke calon pementor ketika aplikasi mereka disetujui.
+        
+        *   **Modal Pendaftaran Multi-Peran (Landing Page UX)**
+            *   **Pembaruan View (`landing/partials/portal.blade.php`):**
+                *   Tombol "Butuh Bantuan?" diganti dengan tombol "Daftar".
+                *   Modal berbasis Alpine.js diimplementasikan, menampilkan opsi "Daftar Mentee", "Daftar Pementor", dan "Daftar Pengurus" (sebagai placeholder).
+            *   **Pembaruan Link Landing Page:** Link "Baca →" pada blog post "Open Recruitment Pementor 2025" di `landing/partials/blog.blade.php` sekarang mengarah ke halaman pendaftaran pementor (`/daftar-pementor`).
+        
+        ### Perbaikan & Debugging Infrastruktur
+        
+        *   **Perbaikan `ParseError` (Route Definition):**
+            *   **Penyebab:** Route `mentor.register.create` dan `mentor.register.store` awalnya ditempatkan di luar tag `<?php` di `routes/web.php`.
+            *   **Solusi:** Memindahkan definisi route ke dalam blok PHP yang benar.
+        *   **Perbaikan `ParseError` (Controller Syntax):**
+            *   **Penyebab:** Kesalahan sintaks di `Admin\MentorApplicationController.php` karena metode `streamCv` tidak sengaja disisipkan ke dalam `streamAudio`.
+            *   **Solusi:** Memperbaiki struktur kode dengan memisahkan kedua metode secara benar.
+        *   **Perbaikan `TypeError` (Audio/CV Stream Path):**
+            *   **Penyebab:** Terjadi `TypeError` saat `Storage::exists()` dipanggil dengan argumen `null` karena `recording_path` atau `cv_path` kosong di database.
+            *   **Solusi:** Menambahkan pemeriksaan `empty($path)` di awal metode `streamAudio()` dan `streamCv()` untuk menangani kasus `null` atau `empty` secara lebih baik, mengembalikan `404` dengan pesan yang jelas.
+        *   **Pembersihan:** Menghapus route debug sementara (`/test-route`) dari `routes/web.php`.
+        
+        ---
+        
+        ## Fitur yang Sudah Selesai (Sesi 1):
 *   **Desain Login & Signup:** Halaman login dan signup telah didesain ulang agar konsisten dengan tampilan landing page, termasuk background, form card, dan styling elemen.
 *   **Layout Dashboard:** Implementasi layout dashboard dua kolom telah selesai, dengan sidebar navigasi di sisi kiri dan area konten utama di kanan. Ini juga mencakup styling untuk status aktif pada link sidebar.
 *   **Manajemen Fakultas:** Fitur CRUD (Create, Read, Update, Delete) lengkap untuk mengelola data fakultas telah diimplementasikan, termasuk view, controller, dan integrasi sidebar.

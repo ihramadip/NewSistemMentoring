@@ -1,5 +1,9 @@
 <?php
 
+// Public Mentor Registration
+Route::get('daftar-pementor', [\App\Http\Controllers\MentorRegistrationController::class, 'create'])->name('mentor.register.create');
+Route::post('daftar-pementor', [\App\Http\Controllers\MentorRegistrationController::class, 'store'])->name('mentor.register.store');
+
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -81,7 +85,9 @@ Route::middleware('auth')->group(function () {
         Route::resource('levels', \App\Http\Controllers\Admin\LevelController::class);
         Route::resource('announcements', \App\Http\Controllers\Admin\AnnouncementController::class);
         Route::resource('materials', \App\Http\Controllers\Admin\MaterialController::class);
-        Route::resource('mentor-applications', \App\Http\Controllers\Admin\MentorApplicationController::class);
+                Route::get('mentor-applications/{application}/audio', [\App\Http\Controllers\Admin\MentorApplicationController::class, 'streamAudio'])->name('mentor-applications.audio');
+        Route::get('mentor-applications/{application}/cv', [\App\Http\Controllers\Admin\MentorApplicationController::class, 'streamCv'])->name('mentor-applications.cv');
+Route::resource('mentor-applications', \App\Http\Controllers\Admin\MentorApplicationController::class);
         Route::resource('announcements', \App\Http\Controllers\Admin\AnnouncementController::class);
         Route::resource('mentees', \App\Http\Controllers\Admin\MenteeController::class)->except(['create', 'store', 'edit', 'update']);
 
@@ -98,3 +104,6 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+
+

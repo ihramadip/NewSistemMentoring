@@ -71,7 +71,7 @@ $documentation = [
 ];
 
 $blogPosts = [
-    ['category' => 'Pengumuman', 'title' => 'Open Recruitment Pementor 2025', 'excerpt' => 'Raih sertifikasi mentoring resmi BOM-PAI dan akses modul eksklusif.', 'date' => '15 Nov 2025'],
+    ['category' => 'Pengumuman', 'title' => 'Open Recruitment Pementor 2025', 'excerpt' => 'Raih sertifikasi mentoring resmi BOM-PAI dan akses modul eksklusif.', 'date' => '15 Nov 2025', 'link' => route('mentor.register.create')],
     ['category' => 'Artikel', 'title' => 'Metode Tadabbur untuk Gen-Z Kampus', 'excerpt' => 'Pendekatan storytelling dan micro habit untuk kelas mentoring.', 'date' => '07 Nov 2025'],
     ['category' => 'Liputan', 'title' => 'Kolaborasi Mentoring x FISIP', 'excerpt' => 'Serial diskusi lintas program studi untuk isu sosial kontemporer.', 'date' => '28 Okt 2025'],
     ['category' => 'Artikel', 'title' => 'Pentingnya Mentoring dalam Pendidikan Islam', 'excerpt' => 'Peran mentor dalam membentuk karakter dan akhlak mahasiswa.', 'date' => '20 Okt 2025'],

@@ -17,7 +17,7 @@
                     <p class="mt-3 text-sm text-slate-600">{{ $post['excerpt'] }}</p>
                     <div class="mt-5 flex items-center justify-between text-xs text-slate-500">
                         <span>{{ $post['date'] }}</span>
-                        <a href="#" class="font-semibold text-brand-teal">Baca →</a>
+                        <a href="{{ $post['link'] ?? '#' }}" class="font-semibold text-brand-teal">Baca →</a>
                     </div>
                 </article>
             @endforeach
