@@ -19,17 +19,25 @@ class FacultySeeder extends Seeder
         DB::table('faculties')->truncate();
         Schema::enableForeignKeyConstraints();
 
-        $faculties = [
-            ['name' => 'Psikologi'],
-            ['name' => 'Ilmu Komputer'],
-            ['name' => 'Ekonomi'],
-            ['name' => 'Kedokteran'],
-            ['name' => 'Teknik'],
-            ['name' => 'Hukum'],
+        // This list is duplicated from DummyMenteeSeeder to ensure consistency.
+        $programs = [
+            ['fakultas' => 'Syariah'], ['fakultas' => 'Syariah'], ['fakultas' => 'Syariah'],
+            ['fakultas' => 'Dakwah'],
+            ['fakultas' => 'Tarbiyah & Keguruan'], ['fakultas' => 'Tarbiyah & Keguruan'],
+            ['fakultas' => 'Hukum'],
+            ['fakultas' => 'Psikologi'],
+            ['fakultas' => 'MIPA'], ['fakultas' => 'MIPA'], ['fakultas' => 'MIPA'],
+            ['fakultas' => 'Teknik'], ['fakultas' => 'Teknik'], ['fakultas' => 'Teknik'],
+            ['fakultas' => 'Ilmu Komunikasi'],
+            ['fakultas' => 'Ekonomi & Bisnis'], ['fakultas' => 'Ekonomi & Bisnis'], ['fakultas' => 'Ekonomi & Bisnis'],
+            ['fakultas' => 'Kedokteran'],
         ];
 
-        foreach ($faculties as $faculty) {
-            Faculty::create($faculty);
+        // Get unique faculty names
+        $facultyNames = array_unique(array_column($programs, 'fakultas'));
+
+        foreach ($facultyNames as $name) {
+            Faculty::create(['name' => $name]);
         }
     }
 }

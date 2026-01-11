@@ -69,6 +69,7 @@ Route::middleware(['auth', 'mentee'])->group(function () {
     // Mentee Exams
     Route::get('/exams', [\App\Http\Controllers\MenteeExamController::class, 'index'])->name('mentee.exams.index');
     Route::get('/exams/{exam}', [\App\Http\Controllers\MenteeExamController::class, 'show'])->name('mentee.exams.show');
+    Route::get('/exams/completed', [\App\Http\Controllers\MenteeExamController::class, 'completed'])->name('mentee.exams.completed');
     Route::post('/exams/{exam}/submit', [\App\Http\Controllers\MenteeExamController::class, 'store'])->name('mentee.exams.store');
 });
 
@@ -80,6 +81,7 @@ Route::middleware('auth')->group(function () {
     // Admin Routes
     Route::prefix('admin')->name('admin.')->middleware(['admin'])->group(function () {
         Route::get('dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
+        Route::get('statistics', [\App\Http\Controllers\Admin\StatisticController::class, 'index'])->name('statistics.index');
         
         Route::resource('faculties', \App\Http\Controllers\Admin\FacultyController::class);
         Route::resource('levels', \App\Http\Controllers\Admin\LevelController::class);
@@ -100,10 +102,11 @@ Route::resource('mentor-applications', \App\Http\Controllers\Admin\MentorApplica
         Route::resource('mentoring-groups', \App\Http\Controllers\Admin\MentoringGroupController::class);
         Route::resource('exams', \App\Http\Controllers\Admin\ExamController::class);
         Route::resource('exams.questions', \App\Http\Controllers\Admin\QuestionController::class);
+
+        // Final Exam Grading
+        Route::resource('final-exam-grading', \App\Http\Controllers\Admin\FinalExamGradingController::class)
+            ->only(['index', 'edit', 'update']);
     });
 });
 
 require __DIR__.'/auth.php';
-
-
-

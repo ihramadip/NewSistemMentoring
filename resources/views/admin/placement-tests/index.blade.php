@@ -14,6 +14,16 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     <h3 class="text-lg font-medium text-gray-900 mb-4">All Test Results</h3>
+
+                    <!-- Search Form -->
+                    <div class="mb-4">
+                        <form action="{{ route('admin.placement-tests.index') }}" method="GET">
+                            <div class="flex items-center">
+                                <x-text-input type="text" name="search" placeholder="Cari nama atau NPM..." class="w-full md:w-1/3" value="{{ request('search') }}" />
+                                <x-primary-button class="ml-2">Cari</x-primary-button>
+                            </div>
+                        </form>
+                    </div>
                     
                     @if(session('success'))
                         <div class="bg-teal-100 border border-teal-400 text-teal-700 px-4 py-3 rounded relative mb-4" role="alert">

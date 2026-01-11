@@ -15,11 +15,15 @@ class MenteeSessionController extends Controller
     {
         $user = Auth::user();
 
-        // Ensure the user is a mentee
-        if ($user->role->name !== 'Mentee') {
-            return redirect()->route('dashboard')->with('error', 'Access denied. Only mentees can view sessions.');
+        // Admin view: Admins don't have a group, show an empty state.
+        if ($user->role->name === 'Admin') {
+            return view('mentee.sessions.index', [
+                'sessions' => collect(), // Empty collection
+                'mentoringGroup' => null
+            ]);
         }
-
+        
+        // Mentee view:
         // Get the mentoring group(s) the mentee is part of
         $mentoringGroup = $user->mentoringGroupsAsMentee()->first();
 

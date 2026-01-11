@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <x-page-header title="{{ __('Daftar Ujian') }}" subtitle="Lihat dan ikuti ujian yang tersedia sesuai level Anda.">
+        <x-page-header title="{{ __('Daftar Ujian') }}" subtitle="{{ $isAdmin ? 'Tinjau semua ujian yang tersedia.' : 'Lihat dan ikuti ujian yang tersedia.' }}">
             <x-slot name="icon">
                 <svg class="h-8 w-8" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12H12m-2.25 4.5H12M12 18.75V15m-1.5 2.25l-1.5-1.5m1.5 1.5l1.5-1.5M12 18.75L10.5 17.25M12 18.75L13.5 17.25M12 14.25h-2.25M15 11.25H9M15 12h-2.25" />

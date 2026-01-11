@@ -16,11 +16,6 @@ class MenteeReportController extends Controller
     {
         $user = Auth::user();
 
-        // Ensure the user is a mentee
-        if ($user->role->name !== 'Mentee') {
-            return redirect()->route('dashboard')->with('error', 'Access denied. Only mentees can view reports.');
-        }
-
         // Fetch Mentee's Placement Test results
         $placementTest = PlacementTest::where('mentee_id', $user->id)
                                     ->with('finalLevel')

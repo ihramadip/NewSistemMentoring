@@ -17,31 +17,42 @@ class MenteeExamController extends Controller
     public function index()
     {
         $user = Auth::user();
+        $isAdmin = $user->role->name === 'Admin'; // Identify if the current user is an Admin
+        $availableExams = collect();
+        $completedExams = collect();
 
-        // Get mentee's final level
-        $placementTest = PlacementTest::where('mentee_id', $user->id)
-                                    ->whereNotNull('final_level_id')
-                                    ->first();
-        $menteeLevelId = $placementTest->final_level_id ?? null;
+        if ($isAdmin) {
+            // Admins see all published exams. The 'published_at' filter is still relevant for admins
+            // as it indicates if an exam is ready to be taken by mentees.
+            $availableExams = Exam::with('level')
+                                ->whereNotNull('published_at')
+                                ->where('published_at', '<=', Carbon::now())
+                                ->orderBy('published_at', 'desc')
+                                ->paginate(10);
+            
+            // For admin, show all exams that have at least one submission as "completed" by any mentee.
+            // This is a more comprehensive view for an admin.
+            $submittedExamIds = ExamSubmission::pluck('exam_id')->unique(); // IDs of exams that have been submitted at least once
+            $completedExams = Exam::whereIn('id', $submittedExamIds)->with('level')->get();
 
-        // Get IDs of exams already submitted by this mentee
-        $submittedExamIds = ExamSubmission::where('mentee_id', $user->id)->pluck('exam_id');
+        } else { // Is a Mentee
+            // Get IDs of exams already submitted by this mentee
+            $submittedExamIds = ExamSubmission::where('mentee_id', $user->id)->pluck('exam_id');
 
-        $availableExams = Exam::with('level')
-                            ->where(function ($query) use ($menteeLevelId) {
-                                // Exams either have no specific level, or match the mentee's level
-                                $query->whereNull('level_id')
-                                      ->orWhere('level_id', $menteeLevelId);
-                            })
-                            ->whereNotNull('published_at')
-                            ->where('published_at', '<=', Carbon::now())
-                            ->whereNotIn('id', $submittedExamIds) // Exclude already submitted exams
-                            ->orderBy('published_at', 'desc')
-                            ->paginate(10);
-                            
-        $completedExams = Exam::whereIn('id', $submittedExamIds)->with('level')->get();
+            // Show all published exams regardless of level, unless already submitted
+            // The user explicitly requested to ignore level filtering for now.
+            // We still consider 'published_at' for mentees to ensure they only see active exams.
+            $availableExams = Exam::with('level')
+                                ->whereNotNull('published_at')
+                                ->where('published_at', '<=', Carbon::now())
+                                ->whereNotIn('id', $submittedExamIds)
+                                ->orderBy('published_at', 'desc')
+                                ->paginate(10);
+                                
+            $completedExams = Exam::whereIn('id', $submittedExamIds)->with('level')->get();
+        }
 
-        return view('mentee.exams.index', compact('availableExams', 'completedExams'));
+        return view('mentee.exams.index', compact('availableExams', 'completedExams', 'isAdmin'));
     }
 
     /**
@@ -144,6 +155,15 @@ class MenteeExamController extends Controller
         $exam->load('questions.options');
 
         return view('mentee.exams.show', compact('exam'));
+    }
+
+    public function completed()
+    {
+        // Check if the session has the success message to prevent direct access
+        if (!session('success')) {
+            return redirect()->route('mentee.exams.index');
+        }
+        return view('mentee.exams.completed');
     }
 
     /**

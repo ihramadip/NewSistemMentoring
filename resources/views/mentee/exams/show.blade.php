@@ -9,9 +9,20 @@
         </x-page-header>
     </x-slot>
 
-    <div class="py-12">
+    <div x-data="timer({{ $exam->duration_minutes ?? 0 }})" x-init="startTimer()" class="py-12">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+
+            <!-- Timer bar -->
+            <div class="fixed top-16 right-0 left-0 lg:left-64 bg-white dark:bg-gray-800 p-3 border-b border-gray-200 dark:border-gray-700 shadow-md z-10">
+                <div class="max-w-4xl mx-auto flex justify-between items-center">
+                    <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Sisa Waktu</h4>
+                    <div class="text-xl font-bold px-4 py-2 rounded-lg" :class="{ 'text-red-500': minutes < 5, 'text-gray-800 dark:text-gray-200': minutes >= 5 }">
+                        <span x-text="minutes.toString().padStart(2, '0')"></span>:<span x-text="seconds.toString().padStart(2, '0')"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mt-16">
                 <div class="p-6 text-gray-900">
                     <h3 class="text-2xl font-bold text-gray-900 mb-2">{{ $exam->name }}</h3>
                     <p class="text-gray-600 mb-6">
@@ -27,7 +38,7 @@
                         </div>
                     @endif
                     
-                    <form method="POST" action="{{ route('mentee.exams.store', $exam) }}" enctype="multipart/form-data">
+                    <form method="POST" action="{{ route('mentee.exams.store', $exam) }}" x-ref="examForm" enctype="multipart/form-data">
                         @csrf
 
                         @forelse ($exam->questions as $question)
@@ -44,15 +55,11 @@
                                         @endforeach
                                     </div>
                                 @elseif ($question->question_type === 'essay')
-                                    <x-textarea-input name="answers[{{ $question->id }}][answer_text]" class class="mt-1 block w-full" rows="5" placeholder="Tulis jawaban Anda di sini..." required></x-textarea-input>
-                                @elseif ($question->question_type === 'audio_response')
-                                    <p class="mb-2 text-gray-600">Rekam jawaban Anda dalam bentuk audio (MP3, WAV, atau M4A).</p>
-                                    <input type="file" name="answers[{{ $question->id }}][answer_audio]" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-brand-teal focus:ring-brand-teal" accept=".mp3,.wav,.m4a" required>
+                                    <x-textarea-input name="answers[{{ $question->id }}][answer_text]" class="mt-1 block w-full" rows="5" placeholder="Tulis jawaban Anda di sini..." required></x-textarea-input>
                                 @endif
                                 <input type="hidden" name="answers[{{ $question->id }}][question_id]" value="{{ $question->id }}">
                                 <x-input-error class="mt-2" :messages="$errors->get('answers.' . $question->id . '.chosen_option_id')" />
                                 <x-input-error class="mt-2" :messages="$errors->get('answers.' . $question->id . '.answer_text')" />
-                                <x-input-error class="mt-2" :messages="$errors->get('answers.' . $question->id . '.answer_audio')" />
                             </div>
                         @empty
                             <p class="text-gray-600 text-center">Tidak ada pertanyaan untuk ujian ini. Silakan hubungi administrator.</p>
@@ -70,4 +77,30 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function timer(duration) {
+            return {
+                totalSeconds: duration * 60,
+                minutes: Math.floor((duration * 60) / 60),
+                seconds: 0,
+                startTimer() {
+                    if (this.totalSeconds <= 0) {
+                        return;
+                    }
+                    const interval = setInterval(() => {
+                        this.totalSeconds--;
+
+                        this.minutes = Math.floor(this.totalSeconds / 60);
+                        this.seconds = this.totalSeconds % 60;
+
+                        if (this.totalSeconds <= 0) {
+                            clearInterval(interval);
+                            this.$refs.examForm.submit();
+                        }
+                    }, 1000);
+                }
+            }
+        }
+    </script>
 </x-app-layout>

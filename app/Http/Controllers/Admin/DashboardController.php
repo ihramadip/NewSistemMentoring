@@ -21,6 +21,7 @@ class DashboardController extends Controller
 
         // Widget Data
         $newApplications = MentorApplication::where('status', 'pending')
+            ->whereHas('user')
             ->with('user')
             ->latest()
             ->take(5)

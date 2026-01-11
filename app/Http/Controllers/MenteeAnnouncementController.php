@@ -13,11 +13,6 @@ class MenteeAnnouncementController extends Controller
     {
         $user = Auth::user();
 
-        // Ensure the user is a mentee
-        if ($user->role->name !== 'Mentee') {
-            return redirect()->route('dashboard')->with('error', 'Access denied. Only mentees can view announcements.');
-        }
-
         $announcements = Announcement::whereNotNull('published_at')
                                     ->where('published_at', '<=', Carbon::now())
                                     ->orderBy('published_at', 'desc')

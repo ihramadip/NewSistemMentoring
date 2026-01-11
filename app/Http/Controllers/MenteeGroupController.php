@@ -13,17 +13,18 @@ class MenteeGroupController extends Controller
     {
         $user = Auth::user();
 
-        // Ensure the user is a mentee
-        if ($user->role->name !== 'Mentee') {
-            return redirect()->route('dashboard')->with('error', 'Access denied. Only mentees can view their group.');
-        }
-
         // Get the mentoring group(s) the mentee is part of
         // Assuming a mentee belongs to only one active group for simplicity
         // If a mentee can be in multiple, this logic needs adjustment
         $mentoringGroup = $user->mentoringGroupsAsMentee()->with(['mentor', 'level', 'members'])->first();
 
         if (!$mentoringGroup) {
+            // For admins, we don't want to show this warning, just an empty state.
+            // Let's check if the user is an admin.
+            if ($user->role->name === 'Admin') {
+                // Admin has no group, which is fine. Just show the page with no group data.
+                return view('mentee.group.index', ['mentoringGroup' => null]);
+            }
             return redirect()->route('dashboard')->with('warning', 'You have not been assigned to a mentoring group yet.');
         }
 

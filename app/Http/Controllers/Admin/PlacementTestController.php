@@ -13,11 +13,23 @@ class PlacementTestController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $testResults = PlacementTest::with(['mentee', 'finalLevel'])
-            ->orderBy('created_at', 'desc')
-            ->paginate(20);
+        $query = PlacementTest::query()
+            ->join('users', 'placement_tests.mentee_id', '=', 'users.id')
+            ->select('placement_tests.*');
+
+        if ($search = $request->input('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('users.name', 'like', "%{$search}%")
+                  ->orWhere('users.npm', 'like', "%{$search}%");
+            });
+        }
+        
+        $testResults = $query->with('mentee', 'finalLevel')
+            ->orderBy('users.npm', 'asc')
+            ->paginate(20)
+            ->withQueryString();
 
         return view('admin.placement-tests.index', compact('testResults'));
     }

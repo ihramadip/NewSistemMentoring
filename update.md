@@ -4,12 +4,93 @@ Berikut adalah ringkasan progres fitur yang sudah dan belum dikerjakan:
 
 ---
 
+## Progres Terbaru (Updated: 11 Jan 2026 - Sesi Gemini)
+
+### Perbaikan Bug: "Attempt to read property 'name' on null"
+*   **`Admin\DashboardController.php`**: Diperbarui untuk memastikan hanya aplikasi mentor dengan pengguna yang valid yang diambil (`whereHas('user')`), mencegah error di dashboard admin.
+*   **`Admin\MentorApplicationController.php`**: Diperbarui dengan logika serupa (`whereHas('user')`) untuk daftar aplikasi mentor, memastikan integritas data.
+
+### Peningkatan Akses Admin ke Halaman Mentee
+*   Menghapus pemeriksaan peran yang membatasi (`if ($user->role->name !== 'Mentee')`) dari controller berikut:
+    *   **`MenteeAnnouncementController.php`**
+    *   **`MenteeGroupController.php`**: Penanganan khusus ditambahkan untuk admin tanpa grup, menampilkan status kosong.
+    *   **`MenteeSessionController.php`**: Penanganan khusus ditambahkan untuk admin tanpa sesi/grup, menampilkan status kosong.
+    *   **`MenteeReportController.php`**
+*   Perubahan ini memungkinkan admin untuk melihat halaman-halaman khusus mentee tanpa hambatan.
+
+### Fitur Baru: Penilaian Ujian Akhir (Admin)
+*   **Seeder (`ExamSubmissionSeeder.php`):**
+    *   Dibuat dan dimodifikasi untuk menghasilkan data `ExamSubmission` untuk semua mentee yang ada (sekitar 2957).
+    *   Sekitar 95% submission diberi skor acak (55-98) dan status 'graded', sementara 5% dibiarkan dengan skor `null` dan status 'submitted' untuk simulasi penilaian.
+    *   Dioptimalkan untuk penyisipan massal dengan `truncate` dan `insert` untuk efisiensi.
+*   **Controller (`Admin\FinalExamGradingController.php`):**
+    *   Dibuat dengan metode `index`, `edit`, dan `update`.
+    *   Metode `index` sekarang menampilkan *semua* submission ujian akhir, diurutkan berdasarkan NPM mentee.
+    *   Metode `edit` menampilkan jawaban untuk ditinjau.
+    *   Metode `update` menyimpan skor akhir dan mengubah status menjadi 'graded'.
+*   **View (`resources/views/admin/final-exam-grading/`):**
+    *   `index.blade.php`: Tabel komprehensif menampilkan semua submission ujian akhir (nama mentee, NPM, judul ujian, status, skor, dan tombol "Nilai" kondisional). Judul halaman diubah menjadi "Semua Hasil Ujian".
+    *   `edit.blade.php`: Formulir penilaian terperinci untuk melihat jawaban mentee dan memasukkan skor akhir.
+*   **Rute (`routes/web.php`):** Menambahkan rute resource `admin.final-exam-grading` (`index`, `edit`, `update`) di bawah middleware admin.
+*   **Sidebar (`layouts/partials/sidebar.blade.php`):** Menambahkan tautan "Nilai Ujian Akhir" ke menu admin.
+
+### Peningkatan: Pengurutan Tabel berdasarkan NPM
+*   **`Admin\PlacementTestController.php`**: Query `index` diubah untuk mengurutkan hasil berdasarkan `users.npm` secara ascending.
+*   **`Admin\FinalExamGradingController.php`**: Query `index` diubah untuk mengurutkan hasil berdasarkan `users.npm` secara ascending.
+
+### Fitur Baru: Pencarian di Tabel Admin
+*   **Nilai Placement Test:**
+    *   **`Admin\PlacementTestController.php`**: Metode `index` diperbarui untuk memfilter query berdasarkan `users.name` atau `users.npm` (`LIKE '%search%'`).
+    *   **`resources/views/admin/placement-tests/index.blade.php`**: Menambahkan formulir pencarian.
+*   **Nilai Ujian Akhir:**
+    *   **`Admin\FinalExamGradingController.php`**: Metode `index` diperbarui untuk memfilter query berdasarkan `users.name` atau `users.npm` (`LIKE '%search%'`).
+    *   **`resources/views/admin/final-exam-grading/index.blade.php`**: Menambahkan formulir pencarian.
+
+### Fitur Baru: Grafik Perbandingan Skor di Halaman Statistik
+*   **`Admin\StatisticController.php`**: Menambahkan logika untuk menghitung rata-rata skor Placement Test dan Ujian Akhir per program studi (`$scoreComparisonData`) dan meneruskannya ke view.
+*   **`layouts/app.blade.php`**: Menambahkan pustaka Chart.js via CDN dan `@stack('scripts')` untuk skrip kustom.
+*   **`admin/statistics/index.blade.php`**: Menambahkan elemen `<canvas>` dan blok JavaScript (`@push('scripts')`) untuk merender grafik batang perbandingan rata-rata nilai Placement Test dan Ujian Akhir per program studi.
+
+---
+
+## Progres Terbaru (Updated: 11 Jan 2026 - Sesi 4)
+
+### Fitur: Laporan Statistik & Data Dummy Mentee
+*   **Generator Data Dummy:** Mengimplementasikan seeder baru (`DummyMenteeSeeder`) untuk membuat sekitar 3000 data mentee secara acak. Seeder ini mencakup distribusi prodi dan fakultas yang realistis, serta membuat kredensial unik (email & password berbasis NPM) untuk setiap mentee.
+*   **Halaman Laporan Statistik (Admin):**
+    *   Membuat halaman baru di `/admin/statistics` yang menampilkan analisis data mentee.
+    *   **Backend:** Mengimplementasikan `StatisticController` untuk melakukan kalkulasi agregat pada data placement test, menghasilkan statistik rata-rata skor per fakultas dan prodi, serta rekapitulasi distribusi level mentee di setiap fakultas.
+    *   **Frontend:** Membuat view `admin/statistics/index.blade.php` untuk menyajikan data statistik dalam bentuk tabel yang informatif.
+    *   **Navigasi:** Menambahkan tautan "Laporan & Statistik" di sidebar admin untuk akses mudah.
+*   **Problem & Resolusi (Proses Seeding):**
+    *   **Problem:** Saat proses seeding, jumlah `placement_test` yang dibuat (misal: 886) tidak sesuai dengan jumlah mentee yang seharusnya dibuat (~3000).
+    *   **Investigasi:** Proses debug menunjukkan bahwa seeder mentee melewati banyak data karena nama fakultas pada daftar prodi tidak cocok dengan daftar fakultas yang dibuat oleh `FacultySeeder`.
+    *   **Resolusi:** `FacultySeeder` diperbarui untuk memastikan semua fakultas yang dibutuhkan tersedia. Namun, masalah persistensi data antar seeder terpisah masih terjadi. Solusi final adalah menggabungkan logika `PlacementTestSeeder` ke dalam `DummyMenteeSeeder` untuk memastikan pembuatan mentee dan placement test-nya terjadi dalam satu operasi yang solid (atomik), yang akhirnya menyelesaikan masalah diskrepansi data.
+*   **Peningkatan UX Seeder:** Menambahkan progress bar persentase real-time di console untuk proses `db:seed` agar memberikan feedback visual selama proses pembuatan data yang berjalan lama.
+
+### Fitur: Peningkatan Antarmuka Ujian Mentee
+*   **Countdown Timer Ujian:** Mengimplementasikan countdown timer (waktu mundur) di sisi klien pada halaman pengerjaan ujian (`/exams/{exam}/show`). Timer ini menggunakan Alpine.js, selalu terlihat di bagian atas layar, dan akan secara otomatis mengirimkan jawaban ujian ketika waktu habis.
+*   **Penghapusan Upload Audio:** Menghilangkan fungsionalitas untuk mengunggah rekaman audio dari form ujian, sesuai dengan permintaan untuk membuat alur ujian lebih sederhana dan fokus pada pertanyaan teks.
+
+### Perbaikan Bug & Peningkatan Akses
+*   **Akses Penuh Admin:**
+    *   **Problem:** Admin ditolak saat mencoba mengakses fitur-fitur khusus mentee (seperti halaman materi) karena pengecekan peran yang terlalu ketat.
+    *   **Solusi:** Memperbarui `MenteeMiddleware` dan `MenteeMaterialController` untuk memberikan hak akses kepada peran 'Admin', memungkinkan admin untuk melihat semua halaman mentee tanpa halangan.
+*   **Visibilitas Daftar Ujian:**
+    *   **Problem:** Halaman daftar ujian (`/exams`) tampil kosong untuk Admin dan Mentee. Ini disebabkan oleh filter level yang terlalu ketat untuk mentee, dan kurangnya data level untuk admin.
+    *   **Solusi:** Memperbarui logika di `MenteeExamController@index` untuk menghapus filter level bagi mentee (sesuai permintaan) dan menampilkan semua ujian yang telah dipublikasikan untuk admin.
+*   **Crash Setelah Submit Ujian:**
+    *   **Problem:** Aplikasi crash setelah mentee mengirimkan jawaban ujian karena rute `mentee.exams.completed` tidak ada.
+    *   **Solusi:** Membuat route, method `completed()` di `MenteeExamController`, dan view konfirmasi (`completed.blade.php`) untuk memberikan halaman landas yang jelas setelah ujian selesai.
+
+---
+
 ## Progres Terbaru (Updated: 10 Jan 2026 - Sesi 2)
 
 *   **Implementasi Fungsionalitas Sisi Mentor (End-to-End):**
     *   **Dashboard Mentor Dinamis:** Merombak total dashboard mentor dari halaman statis menjadi hub dinamis dengan layout dua kolom. Menampilkan kartu statistik (jumlah kelompok, total mentee, laporan tertunda) dan widget untuk "Sesi Mendatang" serta "Kelompok Bimbingan".
     *   **Fitur Kelompok Bimbingan:** Mentor kini dapat melihat daftar kelompok yang dibimbingnya, lengkap dengan anggota mentee. Halaman detail grup juga sudah dibuat untuk menampilkan daftar sesi.
-    *   **Fitur Sesi & Laporan:** Mentor dapat melihat daftar semua sesi, dan masuk ke halaman manajemen per sesi untuk mengisi absensi (hadir, absen, izin) dan laporan progres (skor & catatan) untuk setiap mentee.
+    *   **Fitur Sesi & Laporan:** Mentor kini dapat melihat daftar semua sesi, dan masuk ke halaman manajemen per sesi untuk mengisi absensi (hadir, absen, izin) dan laporan progres (skor & catatan) untuk setiap mentee.
     *   **Fitur Progres Mentee:** Mentor dapat melihat halaman rekapitulasi progres semua mentee yang dibimbingnya, menampilkan rangkuman tingkat kehadiran dan rata-rata skor.
 
 *   **Standardisasi UI & Perbaikan Bug:**

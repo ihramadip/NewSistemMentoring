@@ -17,16 +17,14 @@ class MenteeMiddleware
     {
         $user = auth()->user();
 
-        // If the user is a mentee, let them proceed
-        if ($user && $user->role->name === 'Mentee') {
+        // If the user is a mentee or an admin, let them proceed
+        if ($user && ($user->role->name === 'Mentee' || $user->role->name === 'Admin')) {
             return $next($request);
         }
         
         // If the user is authenticated but not a mentee, redirect them to their appropriate dashboard
         if ($user) {
-            if ($user->role->name === 'Admin') {
-                return redirect()->route('admin.faculties.index')->with('error', 'Akses ditolak. Silakan gunakan dashboard admin Anda.');
-            } elseif ($user->role->name === 'Mentor') {
+            if ($user->role->name === 'Mentor') {
                 return redirect()->route('mentor.dashboard')->with('error', 'Akses ditolak. Silakan gunakan dashboard mentor Anda.');
             }
         }

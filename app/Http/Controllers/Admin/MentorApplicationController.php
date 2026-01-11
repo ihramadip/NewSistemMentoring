@@ -19,7 +19,8 @@ class MentorApplicationController extends Controller
      */
     public function index()
     {
-        $applications = MentorApplication::with('user')
+        $applications = MentorApplication::whereHas('user')
+                                        ->with('user')
                                         ->orderBy('created_at', 'desc')
                                         ->paginate(10); // Paginate for better performance
 
