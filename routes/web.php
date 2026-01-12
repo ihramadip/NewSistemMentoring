@@ -89,7 +89,8 @@ Route::middleware('auth')->group(function () {
         Route::resource('materials', \App\Http\Controllers\Admin\MaterialController::class);
                 Route::get('mentor-applications/{application}/audio', [\App\Http\Controllers\Admin\MentorApplicationController::class, 'streamAudio'])->name('mentor-applications.audio');
         Route::get('mentor-applications/{application}/cv', [\App\Http\Controllers\Admin\MentorApplicationController::class, 'streamCv'])->name('mentor-applications.cv');
-Route::resource('mentor-applications', \App\Http\Controllers\Admin\MentorApplicationController::class);
+        Route::resource('mentor-applications', \App\Http\Controllers\Admin\MentorApplicationController::class);
+        Route::delete('mentor-applications/bulk-destroy', [\App\Http\Controllers\Admin\MentorApplicationController::class, 'bulkDestroy'])->name('mentor-applications.bulkDestroy');
         Route::resource('announcements', \App\Http\Controllers\Admin\AnnouncementController::class);
         Route::resource('mentees', \App\Http\Controllers\Admin\MenteeController::class)->except(['create', 'store', 'edit', 'update']);
 
@@ -97,6 +98,7 @@ Route::resource('mentor-applications', \App\Http\Controllers\Admin\MentorApplica
         Route::get('mentee-import', [\App\Http\Controllers\Admin\MenteeImportController::class, 'create'])->name('mentees.import.create');
         Route::post('mentee-import', [\App\Http\Controllers\Admin\MenteeImportController::class, 'store'])->name('mentees.import.store');
         Route::delete('mentees/destroy-all', [\App\Http\Controllers\Admin\MenteeController::class, 'destroyAll'])->name('mentees.destroyAll');
+        Route::delete('mentees/bulk-destroy', [\App\Http\Controllers\Admin\MenteeController::class, 'bulkDestroy'])->name('mentees.bulkDestroy');
         Route::get('placement-tests/{placementTest}/audio', [\App\Http\Controllers\Admin\PlacementTestController::class, 'streamAudio'])->name('placement-tests.audio');
         Route::resource('placement-tests', \App\Http\Controllers\Admin\PlacementTestController::class);
         Route::resource('mentoring-groups', \App\Http\Controllers\Admin\MentoringGroupController::class);

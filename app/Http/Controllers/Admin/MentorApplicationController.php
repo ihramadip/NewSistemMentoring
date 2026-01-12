@@ -17,12 +17,26 @@ class MentorApplicationController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $applications = MentorApplication::whereHas('user')
-                                        ->with('user')
-                                        ->orderBy('created_at', 'desc')
+        $search = $request->input('search');
+
+        $applicationsQuery = MentorApplication::whereHas('user')
+                                        ->with('user');
+
+        if ($search) {
+            $applicationsQuery->where(function ($query) use ($search) {
+                $query->whereHas('user', function ($userQuery) use ($search) {
+                    $userQuery->where('name', 'like', '%' . $search . '%')
+                              ->orWhere('email', 'like', '%' . $search . '%');
+                });
+            });
+        }
+
+        $applications = $applicationsQuery->orderBy('created_at', 'desc')
                                         ->paginate(10); // Paginate for better performance
+        
+        $applications->appends(['search' => $search]);
 
         return view('admin.mentor-applications.index', compact('applications'));
     }
@@ -190,4 +204,28 @@ class MentorApplicationController extends Controller
         return redirect()->route('admin.mentor-applications.index')
                          ->with('success', 'Mentor application deleted successfully.');
     }
+
+    /**
+     * Remove the specified resources from storage in bulk.
+     */
+    public function bulkDestroy(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'exists:mentor_applications,id',
+        ]);
+
+        $applications = MentorApplication::whereIn('id', $request->input('ids'))->get();
+        $count = 0;
+
+        foreach ($applications as $application) {
+            Storage::delete([$application->cv_path, $application->recording_path]);
+            $application->delete();
+            $count++;
+        }
+
+        return redirect()->route('admin.mentor-applications.index')
+                         ->with('success', "Successfully deleted {$count} selected mentor applications.");
+    }
 }
+

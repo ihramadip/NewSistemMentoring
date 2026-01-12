@@ -12,18 +12,29 @@ class MenteeController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         // Find the 'Mentee' role ID dynamically.
         $menteeRole = Role::where('name', 'Mentee')->first();
 
         // Fallback to a static ID if the role isn't found, though it should be.
-        $menteeRoleId = $menteeRole ? $menteeRole->id : 3; 
+        $menteeRoleId = $menteeRole ? $menteeRole->id : 3;
 
-        $mentees = User::where('role_id', $menteeRoleId)
-                        ->with('faculty') // Eager load faculty relationship
-                        ->orderBy('name', 'asc')
-                        ->paginate(15);
+        $search = $request->input('search');
+
+        $menteesQuery = User::where('role_id', $menteeRoleId)
+                        ->with('faculty'); // Eager load faculty relationship
+
+        if ($search) {
+            $menteesQuery->where(function ($query) use ($search) {
+                $query->where('name', 'like', '%' . $search . '%')
+                      ->orWhere('npm', 'like', '%' . $search . '%');
+            });
+        }
+
+        $mentees = $menteesQuery->orderBy('name', 'asc')->paginate(15);
+
+        $mentees->appends(['search' => $search]);
 
         return view('admin.mentees.index', compact('mentees'));
     }
@@ -98,5 +109,28 @@ class MenteeController extends Controller
         }
         
         return redirect()->route('admin.mentees.index')->with('success', 'All mentee data has been deleted successfully.');
+    }
+
+    /**
+     * Remove the specified resources from storage.
+     */
+    public function bulkDestroy(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'exists:users,id',
+        ]);
+
+        $menteeRole = Role::where('name', 'Mentee')->first();
+        $count = 0;
+
+        if ($menteeRole) {
+            $count = User::where('role_id', $menteeRole->id)
+                         ->whereIn('id', $request->input('ids'))
+                         ->delete();
+        }
+
+        return redirect()->route('admin.mentees.index')
+                         ->with('success', "Successfully deleted {$count} selected mentees.");
     }
 }

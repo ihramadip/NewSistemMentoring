@@ -7,12 +7,6 @@
                 </svg>
             </x-slot>
             <x-slot name="actions">
-                <form method="POST" action="{{ route('admin.mentees.destroyAll') }}" class="inline">
-                    @csrf
-                    <button type="submit" class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-500 active:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150" onclick="return confirm('APAKAH ANDA YAKIN? Tindakan ini akan menghapus SEMUA data mentee dan tidak dapat dikembalikan.')">
-                        {{ __('Hapus Semua Mentee') }}
-                    </button>
-                </form>
                 <x-primary-button href="{{ route('admin.mentees.import.create') }}">
                     {{ __('Impor Mentee') }}
                 </x-primary-button>
@@ -23,29 +17,64 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    <div class="flex items-center justify-end gap-x-4 mb-4">
-                        <form method="POST" action="{{ route('admin.mentees.destroyAll') }}" class="inline">
-                            @csrf
-                            <button type="submit" class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-500 active:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150" onclick="return confirm('APAKAH ANDA YAKIN? Tindakan ini akan menghapus SEMUA data mentee dan tidak dapat dikembalikan.')">
-                                {{ __('Hapus Semua Mentee') }}
-                            </button>
-                        </form>
-                        <x-primary-button href="{{ route('admin.mentees.import.create') }}">
-                            {{ __('Impor Mentee') }}
-                        </x-primary-button>
-                    </div>
+                <div class="p-6 text-gray-900" x-data="{ selectedMentees: [], selectAll: false }">
 
                     @if(session('success'))
                         <div class="bg-teal-100 border border-teal-400 text-teal-700 px-4 py-3 rounded relative mb-4" role="alert">
-                            <span class="block sm:inline">{{ session('success') }}</span>
+                            <span class="block sm:inline">{!! session('success') !!}</span>
                         </div>
                     @endif
+                    @if(session('warning'))
+                        <div class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded relative mb-4" role="alert">
+                            <span class="block sm:inline">{!! session('warning') !!}</span>
+                        </div>
+                    @endif
+
+                    <div class="flex items-center justify-between mb-4">
+                        <div x-show="selectedMentees.length > 0" class="flex items-center space-x-4">
+                            <form id="bulk-delete-form" method="POST" action="{{ route('admin.mentees.bulkDestroy') }}" class="inline">
+                                @csrf
+                                @method('DELETE')
+                                <template x-for="id in selectedMentees" :key="id">
+                                    <input type="hidden" name="ids[]" :value="id">
+                                </template>
+                                <button type="submit"
+                                        class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-500 active:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150"
+                                        onclick="return confirm('APAKAH ANDA YAKIN? Tindakan ini akan menghapus ' + selectedMentees.length + ' data mentee yang dipilih dan tidak dapat dikembalikan.')">
+                                    Hapus <span x-text="selectedMentees.length"></span> Mentee Terpilih
+                                </button>
+                            </form>
+                            <form method="POST" action="{{ route('admin.mentees.destroyAll') }}" class="inline">
+                                @csrf
+                                <button type="submit" class="text-xs text-red-500 hover:text-red-700 underline" onclick="return confirm('PERINGATAN KERAS! Tindakan ini akan menghapus SEMUA data mentee. Anda yakin?')">
+                                    Hapus Semua Mentee
+                                </button>
+                            </form>
+                        </div>
+                        <div x-show="selectedMentees.length === 0" class="w-full">
+                            <form method="GET" action="{{ route('admin.mentees.index') }}">
+                                <div class="flex items-center">
+                                    <input type="text" name="search" placeholder="Cari berdasarkan nama atau NPM..."
+                                           class="block w-full md:w-1/3 border-gray-300 focus:border-brand-teal focus:ring-brand-teal rounded-md shadow-sm text-sm"
+                                           value="{{ request('search') }}">
+                                    <x-primary-button type="submit" class="ml-2">
+                                        Cari
+                                    </x-primary-button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
 
                     <div class="overflow-x-auto">
                         <table class="min-w-full">
                             <thead>
                                 <tr>
+                                    <th scope="col" class="p-4">
+                                        <input type="checkbox"
+                                               class="rounded border-gray-300 text-brand-teal focus:ring-brand-teal"
+                                               @click="selectAll = !selectAll; selectedMentees = selectAll ? {{ $mentees->pluck('id') }} : []">
+                                    </th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">NPM</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
@@ -56,7 +85,12 @@
                             </thead>
                             <tbody>
                                 @forelse ($mentees as $mentee)
-                                    <tr class="@if($loop->even) bg-brand-mist @endif border-b border-gray-200 hover:bg-brand-sky/40">
+                                    <tr class="@if($loop->even) bg-brand-mist @endif border-b border-gray-200 hover:bg-brand-sky/40"
+                                        :class="{'bg-yellow-100': selectedMentees.includes({{ $mentee->id }})}">
+                                        <td class="p-4">
+                                            <input type="checkbox" x-model="selectedMentees" value="{{ $mentee->id }}"
+                                                   class="rounded border-gray-300 text-brand-teal focus:ring-brand-teal">
+                                        </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $mentee->npm }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $mentee->name }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $mentee->email }}</td>
@@ -73,7 +107,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="6" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                                        <td colspan="7" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
                                             Belum ada data mentee.
                                         </td>
                                     </tr>

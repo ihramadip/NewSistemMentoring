@@ -4,7 +4,33 @@ Berikut adalah ringkasan progres fitur yang sudah dan belum dikerjakan:
 
 ---
 
-## Progres Terbaru (Updated: 11 Jan 2026 - Sesi Gemini)
+## Progres Terbaru (Updated: 12 Jan 2026 - Sesi )
+
+### Peningkatan Fitur Manajemen Mentee
+*   **Fitur Hapus Massal Mentee:**
+    *   Menambahkan fungsionalitas untuk memilih beberapa mentee dan menghapusnya secara bersamaan melalui `Admin\MenteeController@bulkDestroy`.
+    *   Integrasi *checkbox* pilih semua dan *checkbox* individual di `resources/views/admin/mentees/index.blade.php` dengan Alpine.js.
+*   **Fitur Pencarian Mentee:**
+    *   Menambahkan form pencarian di `resources/views/admin/mentees/index.blade.php` untuk memfilter mentee berdasarkan nama atau NPM.
+    *   Mengimplementasikan logika pencarian di `Admin\MenteeController@index` dan memastikan paginasi tetap berfungsi dengan hasil pencarian.
+*   **Perbaikan View Detail Mentee:**
+    *   Membuat file `resources/views/admin/mentees/show.blade.php` untuk mengatasi `View [admin.mentees.show] not found` saat mengakses detail mentee.
+
+### Peningkatan Fitur Manajemen Pendaftaran Mentor
+*   **Fitur Hapus Massal Aplikasi Mentor:**
+    *   Menambahkan fungsionalitas untuk memilih beberapa aplikasi mentor dan menghapusnya secara bersamaan melalui `Admin\MentorApplicationController@bulkDestroy`.
+    *   Logika ini juga mencakup penghapusan file terkait (CV dan rekaman audio) dari *storage*.
+    *   Integrasi *checkbox* pilih semua dan *checkbox* individual di `resources/views/admin/mentor-applications/index.blade.php` dengan Alpine.js.
+*   **Fitur Pencarian Aplikasi Mentor:**
+    *   Menambahkan form pencarian di `resources/views/admin/mentor-applications/index.blade.php` untuk memfilter aplikasi berdasarkan nama atau email pendaftar.
+    *   Mengimplementasikan logika pencarian di `Admin\MentorApplicationController@index` dan memastikan paginasi tetap berfungsi dengan hasil pencarian.
+
+### Perbaikan Infrastruktur & Konsistensi UI
+*   **Perbaikan Penamaan Rute:** Mengoreksi penamaan rute `admin.mentees.bulkDestroy` di `routes/web.php` untuk mengatasi `RouteNotFoundException` yang disebabkan oleh *name prefixing* ganda.
+*   **Perbaikan Komponen `x-page-header`:** Mengoreksi file `resources/views/components/page-header.blade.php` agar dapat merender *named slot* `actions` dengan benar, memastikan tombol-tombol aksi (seperti "Impor Mentee") terlihat di *header* halaman.
+*   **Konsistensi Layout:** Menyelaraskan posisi *form* pencarian di halaman manajemen aplikasi mentor ke sisi kiri agar konsisten dengan halaman manajemen mentee.
+
+---
 
 ### Perbaikan Bug: "Attempt to read property 'name' on null"
 *   **`Admin\DashboardController.php`**: Diperbarui untuk memastikan hanya aplikasi mentor dengan pengguna yang valid yang diambil (`whereHas('user')`), mencegah error di dashboard admin.

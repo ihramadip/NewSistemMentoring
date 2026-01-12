@@ -1,5 +1,5 @@
 <!-- resources/views/components/page-header.blade.php -->
-@props(['title', 'icon' => null, 'subtitle' => null])
+@props(['title', 'icon' => null, 'subtitle' => null, 'actions' => null]) {{-- Add 'actions' to props --}}
 
 <header class="bg-white shadow-sm">
     <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex items-center justify-between">
@@ -18,6 +18,10 @@
                 @endif
             </div>
         </div>
-        {{ $slot }} {{-- For any extra content on the right side of the header --}}
+        @if ($actions) {{-- Render actions slot if it exists --}}
+            <div class="ml-auto flex items-center space-x-2">
+                {{ $actions }}
+            </div>
+        @endif
     </div>
 </header>
