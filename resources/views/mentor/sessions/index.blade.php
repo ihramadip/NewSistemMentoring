@@ -35,7 +35,14 @@
                                             - / -
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                            <a href="{{ route('mentor.sessions.show', $session) }}" class="text-indigo-600 hover:text-indigo-900">Kelola</a>
+                                            <a href="{{ route('mentor.sessions.show', $session) }}" class="text-indigo-600 hover:text-indigo-900 mr-3">Kelola</a>
+                                            <form action="{{ route('mentor.sessions.destroy', $session) }}" method="POST" class="inline-block">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('Apakah Anda yakin ingin menghapus sesi ini? Semua data absensi dan laporan terkait akan ikut terhapus.')">
+                                                    Hapus
+                                                </button>
+                                            </form>
                                         </td>
                                     </tr>
                                 @empty

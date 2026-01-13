@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Level;
+use App\Models\User;
 
 class StatisticController extends Controller
 {
@@ -252,7 +253,7 @@ class StatisticController extends Controller
             $searchTerm = '%' . $request->search . '%';
             $query->where(function($q) use ($searchTerm) {
                 $q->where('users.name', 'like', $searchTerm)
-                  ->orWhere('users.npm', 'like', $searchTerm);
+                  ->orWhere('users.npm', 'like', 'searchTerm');
             });
         }
         

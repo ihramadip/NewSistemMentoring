@@ -39,7 +39,7 @@ class ProgressReportController extends Controller
             $mentee->average_score = $scores->isNotEmpty() ? round($scores->avg()) : 'N/A';
 
             // Calculate attendance rate
-            $presentCount = $mentee->attendances->where('status', 'present')->count();
+            $presentCount = $mentee->attendances->where('status', 'hadir')->count();
             
             // Find the group this mentee belongs to among the mentor's groups
             $menteeGroup = $mentee->mentoringGroupsAsMentee->first();

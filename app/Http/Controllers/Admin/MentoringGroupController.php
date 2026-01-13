@@ -52,9 +52,11 @@ class MentoringGroupController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(MentoringGroup $mentoringGroup)
     {
-        //
+        $mentoringGroup->load(['mentor', 'members.faculty']);
+
+        return view('admin.mentoring-groups.show', compact('mentoringGroup'));
     }
 
     /**

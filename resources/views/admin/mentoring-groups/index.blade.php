@@ -93,6 +93,12 @@
                                         </td>
                                         <td class="px-6 py-4 text-right text-sm font-medium">
                                             <a
+                                                href="{{ route('admin.mentoring-groups.show', $group) }}"
+                                                class="text-brand-blue hover:text-brand-purple mr-3"
+                                            >
+                                                Lihat
+                                            </a>
+                                            <a
                                                 href="{{ route('admin.mentoring-groups.edit', $group) }}"
                                                 class="text-brand-teal hover:text-brand-gold mr-3"
                                             >

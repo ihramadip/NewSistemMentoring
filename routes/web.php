@@ -42,6 +42,10 @@ Route::get('/program/{slug}', function (string $slug) {
     // Mentor Routes
     Route::prefix('mentor')->name('mentor.')->middleware(['auth', 'mentor'])->group(function () {
         Route::resource('groups', \App\Http\Controllers\Mentor\GroupController::class);
+        // Custom routes for creating a session for a specific group
+        Route::get('group/{group}/new-session', [\App\Http\Controllers\Mentor\SessionController::class, 'create'])->name('sessions.create-for-group');
+        Route::post('group/{group}/new-session', [\App\Http\Controllers\Mentor\SessionController::class, 'store'])->name('sessions.store-for-group');
+
         Route::resource('sessions', \App\Http\Controllers\Mentor\SessionController::class);
         Route::resource('reports', \App\Http\Controllers\Mentor\ProgressReportController::class);
     });

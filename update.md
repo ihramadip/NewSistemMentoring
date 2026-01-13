@@ -241,6 +241,65 @@ Berikut adalah ringkasan progres fitur yang sudah dan belum dikerjakan:
 
 ---
 
+Progres Terbaru (Updated: 13 Januari 2026 - Sesi 5)
+
+  Fitur Analisis Statistik (admin/statistics)
+   * Perombakan UI/UX Halaman Statistik: Mengubah tampilan halaman statistik dari satu halaman
+     panjang menjadi antarmuka berbasis tab (menggunakan Alpine.js) untuk navigasi yang lebih
+     baik:
+       * Tab "Ringkasan & Demografi": Berisi "Statistik Placement Test per Fakultas",
+         "Distribusi Level per Fakultas", dan "Statistik Kehadiran Mentee".
+       * Tab "Analisis Perbandingan": Berisi "Grafik Perbandingan Nilai Rata-Rata (Placement
+         Test vs Ujian Akhir) per Program Studi", "Analisis Peningkatan/Penurunan Nilai
+         (Placement Test vs Ujian Akhir) per Fakultas", dan "Analisis Progresi Level per
+         Fakultas".
+       * Tab "Analisis Individu": Berisi tabel "Analisis Individu (Placement Test vs Ujian
+         Akhir)" yang menampilkan NPM, Nama, Nilai Placement Test, Nilai Ujian Akhir, dan
+         Status (Naik/Turun/Tetap) untuk setiap mentee, dilengkapi dengan fitur pencarian dan
+         paginasi (10 baris per halaman).
+   * Analisis Peningkatan/Penurunan Nilai Individu: Menambahkan logika di
+     Admin\StatisticController.php untuk menghitung dan menampilkan jumlah mentee yang nilainya
+     "Naik", "Turun", atau "Tetap" dari Placement Test ke Ujian Akhir, dikelompokkan per
+     fakultas. Visualisasi menggunakan grafik batang bertumpuk di
+     admin/statistics/index.blade.php.
+   * Perbaikan Tampilan Analisis Progresi Level: Mengubah visualisasi analisis progresi level
+     menjadi grafik batang terpisah untuk setiap fakultas, dengan setiap grafik menampilkan
+     mentee yang "Naik", "Turun", atau "Tetap" berdasarkan level awal mereka.
+   * Perbaikan Bug `ParseError` dan `Undefined variable`: Mengatasi berbagai error (seperti
+     ParseError: Unmatched '}', Undefined variable $request, FatalError: Cannot use ... as ...)
+     yang terjadi selama pengembangan fitur ini.
+   * Perbaikan ID Konflik: Mengubah id elemen canvas dari scoreComparisonChart menjadi
+     scoreComparisonChartByProgram untuk menghindari konflik ID.
+
+  Fitur Pengelompokan Otomatis (admin/mentoring-groups/auto-grouping)
+   * Controller Baru: Membuat Admin\AutoGroupingController.php untuk mengelola logika
+     pengelompokan otomatis.
+   * Route Baru: Menambahkan route GET dan POST untuk halaman pengelompokan otomatis.
+   * Halaman Konfirmasi & Pemicu: Membuat
+     resources/views/admin/mentoring-groups/auto-create.blade.php yang menampilkan statistik
+     mentee belum berkelompok dan mentor tersedia, serta tombol untuk memicu pengelompokan.
+   * Logika Pengelompokan (WIP/Debugging): Mengembangkan logika di AutoGroupingController@store
+     untuk mengelompokkan mentee berdasarkan fakultas, level, dan gender (sekitar 14 mentee per
+     kelompok, 1 mentor). Logika ini memprioritaskan penugasan mentor dari fakultas yang sama.
+   * Peningkatan UX dengan Loading Popup: Menambahkan loading overlay berbasis Alpine.js pada
+     form pengelompokan otomatis untuk memberikan umpan balik visual saat proses berjalan.
+   * Integrasi Tombol: Menambahkan tombol "Kelompokkan Otomatis" di halaman Manajemen Kelompok
+     (admin/mentoring-groups/index.blade.php).
+   * Perbaikan Komponen `x-secondary-button`: Memodifikasi komponen secondary-button.blade.php
+     agar dapat berfungsi sebagai link (tag <a>) ketika atribut href disediakan, untuk
+     mendukung tombol "Kelompokkan Otomatis".
+
+  Perbaikan & Konsistensi Data
+   * Pembaruan `DummyMentorSeeder.php`: Mengoreksi nama kolom yang salah (reason menjadi
+     btaq_history, feedback menjadi notes_from_reviewer) agar sesuai dengan skema database.
+     Menambahkan penanganan penghapusan data mentoring_groups terkait sebelum menghapus user
+     mentor untuk menghindari Integrity constraint violation.
+   * Penyesuaian `DatabaseSeeder.php`: Memastikan urutan seeder yang benar (DummyMenteeSeeder,
+     ExamSubmissionSeeder, DummyMentorSeeder) agar data dummy lengkap dan konsisten.
+   * Tampilan Fakultas Mentor: Menambahkan kolom "Fakultas" pada tabel daftar aplikasi mentor
+     (admin/mentor-applications/index.blade.php) untuk memverifikasi data mentor.
+
+
 Rencana
 
 Tentu, bos. Berikut beberapa ide analisis biasa yang bisa memberikan wawasan berguna:

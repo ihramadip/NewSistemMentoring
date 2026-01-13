@@ -8,7 +8,7 @@ class Session extends Model
 {
     protected $table = 'mentoring_sessions'; // Explicitly set the table name
     
-    Protected $fillable = ['mentoring_group_id','session_number','date','topic'];
+    Protected $fillable = ['mentoring_group_id','session_number','date','title', 'description'];
 
     protected $casts = [
         'date' => 'datetime',
