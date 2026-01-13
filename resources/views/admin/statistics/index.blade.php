@@ -36,6 +36,21 @@
                             class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
                         Analisis Individu
                     </button>
+                    <button @click="tab = 'aktivitas_mentor'" 
+                            :class="{ 'border-brand-purple text-brand-purple': tab === 'aktivitas_mentor', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': tab !== 'aktivitas_mentor' }"
+                            class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                        Aktivitas Mentor
+                    </button>
+                    <button @click="tab = 'performa_kelompok'" 
+                            :class="{ 'border-brand-purple text-brand-purple': tab === 'performa_kelompok', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': tab !== 'performa_kelompok' }"
+                            class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                        Performa Kelompok
+                    </button>
+                    <button @click="tab = 'efektivitas_level'" 
+                            :class="{ 'border-brand-purple text-brand-purple': tab === 'efektivitas_level', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': tab !== 'efektivitas_level' }"
+                            class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                        Efektivitas Level
+                    </button>
                 </nav>
             </div>
 
@@ -248,6 +263,215 @@
                         <div class="mt-4">
                             {{ $individualAnalyses->links() }}
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mentor Activity Tab -->
+            <div x-show="tab === 'aktivitas_mentor'" class="space-y-8">
+                <!-- Most Active Mentors -->
+                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-6 text-gray-900 dark:text-gray-100">
+                        <h3 class="text-xl font-semibold mb-4">Mentor Paling Aktif (Top 10)</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Diurutkan berdasarkan jumlah laporan progres yang telah diisi.</p>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                <thead class="bg-gray-50 dark:bg-gray-700">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Nama Mentor</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Fakultas</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Jumlah Kelompok</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Laporan Diisi</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                    @forelse($mostActiveMentors as $mentor)
+                                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{{ $mentor['name'] }}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{{ $mentor['faculty'] }}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{{ $mentor['groups_count'] }}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-800 dark:text-gray-200">{{ $mentor['reports_filled'] }}</td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="4" class="px-6 py-4 text-center text-sm text-gray-500">Data tidak ditemukan.</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mentors Needing Attention -->
+                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-6 text-gray-900 dark:text-gray-100">
+                        <h3 class="text-xl font-semibold mb-4 text-amber-700 dark:text-amber-500">Mentor Perlu Perhatian</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Mentor yang mengisi kurang dari 2 laporan atau memiliki rata-rata kehadiran mentee di bawah 50%.</p>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                <thead class="bg-gray-50 dark:bg-gray-700">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Nama Mentor</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Fakultas</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Jumlah Kelompok</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Laporan Diisi</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Avg. Kehadiran Mentee</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                    @forelse($mentorsNeedingAttention as $mentor)
+                                        <tr class="hover:bg-amber-50 dark:hover:bg-amber-900/20">
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{{ $mentor['name'] }}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{{ $mentor['faculty'] }}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{{ $mentor['groups_count'] }}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-amber-700 dark:text-amber-500">{{ $mentor['reports_filled'] }}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-amber-700 dark:text-amber-500">{{ number_format($mentor['avg_attendance_rate'], 1) }}%</td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500">Tidak ada mentor yang perlu perhatian khusus saat ini.</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Group Performance Tab -->
+            <div x-show="tab === 'performa_kelompok'" class="space-y-8">
+                <!-- Progressive Groups -->
+                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-6 text-gray-900 dark:text-gray-100">
+                        <h3 class="text-xl font-semibold mb-4 text-green-700 dark:text-green-500">Kelompok Paling Progresif (Top 10)</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Diurutkan berdasarkan persentase kenaikan rata-rata nilai tertinggi dari Placement Test ke Ujian Akhir.</p>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                <thead class="bg-gray-50 dark:bg-gray-700">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Nama Kelompok</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Mentor</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Kenaikan Rata-rata Nilai (%)</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                    @forelse($progressiveGroups as $group)
+                                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{{ $group->group_name }}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{{ $group->mentor_name }}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-green-700 dark:text-green-500">
+                                                +{{ number_format($group->avg_score_increase_percentage, 2) }}%
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="3" class="px-6 py-4 text-center text-sm text-gray-500">Data tidak ditemukan.</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stagnant Groups -->
+                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-6 text-gray-900 dark:text-gray-100">
+                        <h3 class="text-xl font-semibold mb-4 text-red-700 dark:text-red-500">Kelompok Paling Stagnan (Top 10)</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Diurutkan berdasarkan persentase kenaikan rata-rata nilai terendah (atau penurunan) dari Placement Test ke Ujian Akhir.</p>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                <thead class="bg-gray-50 dark:bg-gray-700">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Nama Kelompok</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Mentor</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Perubahan Rata-rata Nilai (%)</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                    @forelse($stagnantGroups as $group)
+                                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{{ $group->group_name }}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{{ $group->mentor_name }}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold @if($group->avg_score_increase_percentage < 0) text-red-700 dark:text-red-500 @else text-yellow-700 dark:text-yellow-500 @endif">
+                                                {{ $group->avg_score_increase_percentage > 0 ? '+' : '' }}{{ number_format($group->avg_score_increase_percentage, 2) }}%
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="3" class="px-6 py-4 text-center text-sm text-gray-500">Data tidak ditemukan.</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Level Effectiveness Tab -->
+            <div x-show="tab === 'efektivitas_level'" class="space-y-8">
+                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-6 text-gray-900 dark:text-gray-100">
+                        <h3 class="text-xl font-semibold mb-4">Matriks Efektivitas Level</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Menunjukkan persentase transisi mentee dari level awal (baris) ke level akhir (kolom).</p>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 border border-gray-200 dark:border-gray-700">
+                                <thead class="bg-gray-50 dark:bg-gray-700">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider border-b border-gray-200 dark:border-gray-700">
+                                            Level Awal
+                                        </th>
+                                        @foreach($levels as $level)
+                                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider border-b border-gray-200 dark:border-gray-700">
+                                                ke: {{ $level->name }}
+                                            </th>
+                                        @endforeach
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                    @forelse($levelEffectivenessMatrix as $initialLevelName => $finalLevels)
+                                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-700">{{ $initialLevelName }}</td>
+                                            @foreach($levels as $level)
+                                                @php
+                                                    $percentage = $finalLevels[$level->name] ?? 0;
+                                                    $isDiagonal = $initialLevelName === $level->name;
+                                                @endphp
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-center font-semibold 
+                                                    @if($isDiagonal) bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300
+                                                    @else text-gray-600 dark:text-gray-300 @endif">
+                                                    {{ number_format($percentage, 1) }}%
+                                                </td>
+                                            @endforeach
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="{{ count($levels) + 1 }}" class="px-6 py-4 text-center text-sm text-gray-500">Data tidak ditemukan.</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                         <p class="text-xs text-gray-500 dark:text-gray-400 mt-4">Keterangan: Baris menunjukkan level awal mentee, kolom menunjukkan level akhir mentee setelah ujian. Sel yang diberi highlight biru menunjukkan persentase mentee yang tetap (tidak naik/turun) di level tersebut.</p>
+                    </div>
+                </div>
+
+                <!-- Automated Interpretation -->
+                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-6 text-gray-900 dark:text-gray-100">
+                        <h3 class="text-xl font-semibold mb-4">Interpretasi Otomatis</h3>
+                        @if(empty($levelEffectivenessInterpretation))
+                            <p class="text-gray-600 dark:text-gray-400">Tidak ada interpretasi yang tersedia.</p>
+                        @else
+                            <ul class="list-disc pl-5 space-y-2 text-gray-700 dark:text-gray-300">
+                                @foreach($levelEffectivenessInterpretation as $interpretation)
+                                    <li>{!! $interpretation !!}</li>
+                                @endforeach
+                            </ul>
+                        @endif
                     </div>
                 </div>
             </div>

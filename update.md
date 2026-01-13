@@ -103,7 +103,7 @@ Berikut adalah ringkasan progres fitur yang sudah dan belum dikerjakan:
     *   **Problem:** Admin ditolak saat mencoba mengakses fitur-fitur khusus mentee (seperti halaman materi) karena pengecekan peran yang terlalu ketat.
     *   **Solusi:** Memperbarui `MenteeMiddleware` dan `MenteeMaterialController` untuk memberikan hak akses kepada peran 'Admin', memungkinkan admin untuk melihat semua halaman mentee tanpa halangan.
 *   **Visibilitas Daftar Ujian:**
-    *   **Problem:** Halaman daftar ujian (`/exams`) tampil kosong untuk Admin dan Mentee. Ini disebabkan oleh filter level yang terlalu ketat untuk mentee, dan kurangnya data level untuk admin.
+    *   **Problem:** Halaman daftar ujian (`/exams`) tampil kosong untuk Admin dan Mentee. Ini disebabkan oleh filter level yang terlalu ketat bagi mentee, dan kurangnya data level untuk admin.
     *   **Solusi:** Memperbarui logika di `MenteeExamController@index` untuk menghapus filter level bagi mentee (sesuai permintaan) dan menampilkan semua ujian yang telah dipublikasikan untuk admin.
 *   **Crash Setelah Submit Ujian:**
     *   **Problem:** Aplikasi crash setelah mentee mengirimkan jawaban ujian karena rute `mentee.exams.completed` tidak ada.
@@ -241,93 +241,46 @@ Berikut adalah ringkasan progres fitur yang sudah dan belum dikerjakan:
 
 ---
 
-Progres Terbaru (Updated: 13 Januari 2026 - Sesi 5)
+## Progres Terbaru (Updated: 13 Januari 2026)
 
-  Fitur Analisis Statistik (admin/statistics)
-   * Perombakan UI/UX Halaman Statistik: Mengubah tampilan halaman statistik dari satu halaman
-     panjang menjadi antarmuka berbasis tab (menggunakan Alpine.js) untuk navigasi yang lebih
-     baik:
-       * Tab "Ringkasan & Demografi": Berisi "Statistik Placement Test per Fakultas",
-         "Distribusi Level per Fakultas", dan "Statistik Kehadiran Mentee".
-       * Tab "Analisis Perbandingan": Berisi "Grafik Perbandingan Nilai Rata-Rata (Placement
-         Test vs Ujian Akhir) per Program Studi", "Analisis Peningkatan/Penurunan Nilai
-         (Placement Test vs Ujian Akhir) per Fakultas", dan "Analisis Progresi Level per
-         Fakultas".
-       * Tab "Analisis Individu": Berisi tabel "Analisis Individu (Placement Test vs Ujian
-         Akhir)" yang menampilkan NPM, Nama, Nilai Placement Test, Nilai Ujian Akhir, dan
-         Status (Naik/Turun/Tetap) untuk setiap mentee, dilengkapi dengan fitur pencarian dan
-         paginasi (10 baris per halaman).
-   * Analisis Peningkatan/Penurunan Nilai Individu: Menambahkan logika di
-     Admin\StatisticController.php untuk menghitung dan menampilkan jumlah mentee yang nilainya
-     "Naik", "Turun", atau "Tetap" dari Placement Test ke Ujian Akhir, dikelompokkan per
-     fakultas. Visualisasi menggunakan grafik batang bertumpuk di
-     admin/statistics/index.blade.php.
-   * Perbaikan Tampilan Analisis Progresi Level: Mengubah visualisasi analisis progresi level
-     menjadi grafik batang terpisah untuk setiap fakultas, dengan setiap grafik menampilkan
-     mentee yang "Naik", "Turun", atau "Tetap" berdasarkan level awal mereka.
-   * Perbaikan Bug `ParseError` dan `Undefined variable`: Mengatasi berbagai error (seperti
-     ParseError: Unmatched '}', Undefined variable $request, FatalError: Cannot use ... as ...)
-     yang terjadi selama pengembangan fitur ini.
-   * Perbaikan ID Konflik: Mengubah id elemen canvas dari scoreComparisonChart menjadi
-     scoreComparisonChartByProgram untuk menghindari konflik ID.
+  **Fitur Manajemen Sesi Mentor**
+   * Memungkinkan mentor untuk membuat dan menghapus sesi mentoring langsung dari halaman detail kelompok mereka.
+   * **Implementasi**: Penambahan metode `create`, `store`, `destroy` di `app/Http/Controllers/Mentor/SessionController.php`.
+   * **UI**: Pembuatan tampilan `resources/views/mentor/sessions/create.blade.php` untuk formulir pembuatan sesi. Modifikasi tampilan `resources/views/mentor/groups/show.blade.php` untuk menambahkan tombol "Buat Sesi Baru" dan memperbarui pesan jika belum ada sesi.
+   * **Rute**: Pembaruan rute di `routes/web.php` untuk mendukung pembuatan sesi yang terikat pada grup.
 
-  Fitur Pengelompokan Otomatis (admin/mentoring-groups/auto-grouping)
-   * Controller Baru: Membuat Admin\AutoGroupingController.php untuk mengelola logika
-     pengelompokan otomatis.
-   * Route Baru: Menambahkan route GET dan POST untuk halaman pengelompokan otomatis.
-   * Halaman Konfirmasi & Pemicu: Membuat
-     resources/views/admin/mentoring-groups/auto-create.blade.php yang menampilkan statistik
-     mentee belum berkelompok dan mentor tersedia, serta tombol untuk memicu pengelompokan.
-   * Logika Pengelompokan (WIP/Debugging): Mengembangkan logika di AutoGroupingController@store
-     untuk mengelompokkan mentee berdasarkan fakultas, level, dan gender (sekitar 14 mentee per
-     kelompok, 1 mentor). Logika ini memprioritaskan penugasan mentor dari fakultas yang sama.
-   * Peningkatan UX dengan Loading Popup: Menambahkan loading overlay berbasis Alpine.js pada
-     form pengelompokan otomatis untuk memberikan umpan balik visual saat proses berjalan.
-   * Integrasi Tombol: Menambahkan tombol "Kelompokkan Otomatis" di halaman Manajemen Kelompok
-     (admin/mentoring-groups/index.blade.php).
-   * Perbaikan Komponen `x-secondary-button`: Memodifikasi komponen secondary-button.blade.php
-     agar dapat berfungsi sebagai link (tag <a>) ketika atribut href disediakan, untuk
-     mendukung tombol "Kelompokkan Otomatis".
+  **Perbaikan Bug & Konsistensi Data:**
+   * **Perbaikan `ReflectionException`**: Mengatasi kesalahan kelas tidak ditemukan dengan menambahkan `use App\Models\MentoringGroup;` di `app/Http/Controllers/Mentor/SessionController.php`.
+   * **Perbaikan `MethodNotAllowedHttpException`**: Menyelesaikan konflik rute dengan merefaktorisasi rute pembuatan sesi mentor agar lebih spesifik dan unik, serta membersihkan cache rute.
+   * **Perbaikan `QueryException` (Field 'session_number' doesn't have a default value)**:
+     * Membuat migrasi baru (`database/migrations/2026_01_13_051105_update_sessions_table_for_title_desc.php`) untuk mengganti nama kolom `topic` menjadi `title` dan menambahkan kolom `description` pada tabel `mentoring_sessions`.
+     * Memperbarui `$fillable` di `app/Models/Session.php` agar sesuai dengan skema baru (`title`, `description`).
+     * Mengimplementasikan logika di `app/Http/Controllers/Mentor/SessionController.php` untuk menghitung `session_number` secara otomatis.
+   * **Perbaikan `QueryException` (Data truncated for column 'status')**: Mengatasi masalah saat seeding data kehadiran dengan mengubah nilai status dari bahasa Inggris ('present') ke bahasa Indonesia ('hadir', 'izin', 'absen') di `database/seeders/MenteeProgressSeeder.php`.
+   * **Perbaikan Kalkulasi Kehadiran**: Mengoreksi perhitungan tingkat kehadiran di `app/Http/Controllers/Mentor/ProgressReportController.php` untuk mencari status `'hadir'` (bukan `'present'`) agar akurat.
 
-  Perbaikan & Konsistensi Data
-   * Pembaruan `DummyMentorSeeder.php`: Mengoreksi nama kolom yang salah (reason menjadi
-     btaq_history, feedback menjadi notes_from_reviewer) agar sesuai dengan skema database.
-     Menambahkan penanganan penghapusan data mentoring_groups terkait sebelum menghapus user
-     mentor untuk menghindari Integrity constraint violation.
-   * Penyesuaian `DatabaseSeeder.php`: Memastikan urutan seeder yang benar (DummyMenteeSeeder,
-     ExamSubmissionSeeder, DummyMentorSeeder) agar data dummy lengkap dan konsisten.
-   * Tampilan Fakultas Mentor: Menambahkan kolom "Fakultas" pada tabel daftar aplikasi mentor
-     (admin/mentor-applications/index.blade.php) untuk memverifikasi data mentor.
+  **Fitur Admin: Tampilan Detail Kelompok Mentoring**
+   * Menambahkan aksi "Lihat" di halaman manajemen kelompok mentoring (`/admin/mentoring-groups`) yang menampilkan daftar anggota (mentee) dari kelompok tersebut.
+   * **Implementasi**: Penambahan metode `show()` di `app/Http/Controllers/Admin/MentoringGroupController.php`.
+   * **UI**: Pembuatan tampilan `resources/views/admin/mentoring-groups/show.blade.php` untuk menampilkan detail kelompok dan anggotanya.
 
+  **Seeder Data Dummy Baru (Tanpa Menghapus Data Lain)**
+   * **`MentorSessionSeeder`**: Membuat sesi dummy untuk kelompok mentor yang belum memiliki sesi (`database/seeders/MentorSessionSeeder.php`).
+   * **`MenteeProgressSeeder`**: Membuat data absensi dan laporan progres dummy untuk setiap mentee di setiap sesi (`database/seeders/MenteeProgressSeeder.php`).
 
-Rencana
+  **Fitur Statistik Admin: Analisis Aktivitas Mentor**
+   * **Tab Baru**: Menambahkan tab "Aktivitas Mentor" baru di halaman statistik admin (`/admin/statistics`).
+   * **Logika Backend**: Mengimplementasikan logika di `Admin\StatisticController.php` untuk menghitung aktivitas mentor (jumlah laporan diisi, rata-rata tingkat kehadiran mentee, jumlah kelompok).
+   * **UI**: Menampilkan dua tabel di view: "Mentor Paling Aktif" dan "Mentor Perlu Perhatian".
 
-Tentu, bos. Berikut beberapa ide analisis biasa yang bisa memberikan wawasan berguna:
+  **Fitur Statistik Admin: Analisis Performa Kelompok**
+   * **Tab Baru**: Menambahkan tab "Performa Kelompok" baru di halaman statistik admin (`/admin/statistics`).
+   * **Logika Backend**: Mengimplementasikan logika di `Admin\StatisticController.php` untuk menghitung persentase kenaikan rata-rata nilai (Ujian Akhir vs. Placement Test) untuk setiap kelompok.
+   * **UI**: Menampilkan dua tabel di view: "Kelompok Paling Progresif" dan "Kelompok Paling Stagnan" (diurutkan berdasarkan persentase kenaikan terendah).
+   * **Pembaruan**: Mengubah perhitungan dari "poin" menjadi "persentase".
 
-   1. Analisis Aktivitas Mentor:
-       * Tujuan: Memantau kedisiplinan dan keaktifan mentor.
-       * Visualisasi: Membuat tabel "Mentor Paling Aktif" (berdasarkan jumlah laporan diisi)
-         dan "Mentor Perlu Perhatian" (yang laporannya sering kosong atau tingkat kehadiran
-         mentee-nya rendah). Ini bisa jadi bahan evaluasi langsung untuk Divisi Mentor.
-
-   2. Analisis Performa Kelompok:
-       * Tujuan: Mengidentifikasi kelompok yang sukses dan yang butuh bantuan.
-       * Visualisasi: Tabel "Kelompok Progresif" yang diurutkan berdasarkan rata-rata kenaikan
-         nilai tertinggi dari Placement Test ke Ujian Akhir, dan tabel "Kelompok Stagnan" yang
-         progresnya paling rendah.
-
-   3. Analisis Efektivitas Level:
-       * Tujuan: Melihat di level mana mentee paling banyak "terjebak" atau sulit naik kelas.
-       * Visualisasi: Tabel matriks sederhana yang menunjukkan, dari semua mentee yang memulai
-         di Level X, berapa persen yang berakhir di Level Y setelah Ujian Akhir. Ini bisa
-         mengevaluasi kurikulum per level.
-
-   4. Visualisasi Demografi Mentee:
-       * Tujuan: Memberikan gambaran cepat tentang profil mentee.
-       * Visualisasi: Mengubah data sebaran mentee yang sudah ada dalam bentuk tabel menjadi
-         visual seperti Diagram Pie untuk distribusi per fakultas atau Diagram Batang Bertumpuk
-         untuk distribusi level di dalam setiap fakultas.
-
-  Rekomendasi:
-  Saya sarankan kita mulai dengan Analisis Aktivitas Mentor. Datanya sudah ada dan hasilnya
-  bisa langsung ditindaklanjuti oleh pengurus untuk pembinaan mentor.
+  **Fitur Statistik Admin: Analisis Efektivitas Level**
+   * **Tab Baru**: Menambahkan tab "Efektivitas Level" baru di halaman statistik admin (`/admin/statistics`).
+   * **Logika Backend**: Mengimplementasikan logika di `Admin\StatisticController.php` untuk membuat matriks transisi level (persentase mentee dari level awal ke level akhir).
+   * **Interpretasi Otomatis**: Menambahkan interpretasi otomatis (dalam bahasa awam) untuk matriks tersebut di `Admin\StatisticController.php`.
+   * **UI**: Menampilkan tabel matriks di view dengan penyorotan diagonal untuk tingkat retensi level.

@@ -259,6 +259,153 @@ class StatisticController extends Controller
         
         $individualAnalyses = $query->orderBy('users.npm')->paginate(10)->withQueryString();
 
+        // 9. Mentor Activity Analysis
+        $mentors = User::where('role_id', 2) // Role 2 for Mentor
+            ->with(['mentoringGroupsAsMentor.sessions.attendances', 'mentoringGroupsAsMentor.sessions.progressReports', 'faculty', 'mentoringGroupsAsMentor.members'])
+            ->get();
+
+        $mentorStats = $mentors->map(function ($mentor) {
+            $totalReportsFilled = 0;
+            $totalPossibleAttendances = 0;
+            $totalPresentAttendances = 0;
+
+            foreach ($mentor->mentoringGroupsAsMentor as $group) {
+                foreach ($group->sessions as $session) {
+                    $totalReportsFilled += $session->progressReports->count();
+                    $totalPossibleAttendances += $group->members->count();
+                    $totalPresentAttendances += $session->attendances->where('status', 'hadir')->count();
+                }
+            }
+
+            $avgAttendanceRate = $totalPossibleAttendances > 0 ? round(($totalPresentAttendances / $totalPossibleAttendances) * 100) : 0;
+
+            return [
+                'id' => $mentor->id,
+                'name' => $mentor->name,
+                'faculty' => $mentor->faculty->name ?? 'N/A',
+                'groups_count' => $mentor->mentoringGroupsAsMentor->count(),
+                'reports_filled' => $totalReportsFilled,
+                'avg_attendance_rate' => $avgAttendanceRate,
+            ];
+        });
+
+        $mostActiveMentors = $mentorStats->sortByDesc('reports_filled')->take(10);
+        $mentorsNeedingAttention = $mentorStats->filter(function($stat) {
+            return $stat['reports_filled'] < 2 || $stat['avg_attendance_rate'] < 50;
+        })->sortBy('avg_attendance_rate');
+
+        // 10. Group Performance Analysis
+        $allGroupsData = DB::table('mentoring_groups')
+            ->join('users as mentors', 'mentoring_groups.mentor_id', '=', 'mentors.id')
+            ->join('group_members', 'mentoring_groups.id', '=', 'group_members.mentoring_group_id')
+            ->join('users as mentees', 'group_members.mentee_id', '=', 'mentees.id')
+            ->leftJoin('placement_tests', 'mentees.id', '=', 'placement_tests.mentee_id')
+            ->leftJoin('exam_submissions', 'mentees.id', '=', 'exam_submissions.mentee_id')
+            ->where('exam_submissions.status', 'graded')
+            ->whereNotNull('placement_tests.audio_reading_score')
+            ->whereNotNull('placement_tests.theory_score')
+            ->select(
+                'mentoring_groups.id as group_id',
+                'mentoring_groups.name as group_name',
+                'mentors.name as mentor_name',
+                DB::raw('AVG((placement_tests.audio_reading_score + placement_tests.theory_score) / 2) as avg_placement_score'),
+                DB::raw('AVG(exam_submissions.total_score) as avg_final_exam_score')
+            )
+            ->groupBy('mentoring_groups.id', 'mentoring_groups.name', 'mentors.name')
+            ->get();
+
+        $groupPerformance = $allGroupsData->map(function ($group) {
+            $placementScore = $group->avg_placement_score;
+            $finalExamScore = $group->avg_final_exam_score;
+
+            if ($placementScore > 0) {
+                $group->avg_score_increase_percentage = (($finalExamScore - $placementScore) / $placementScore) * 100;
+            } else {
+                $group->avg_score_increase_percentage = 0; // Or handle as 'N/A' if preferred for 0 placement score
+            }
+            return $group;
+        });
+
+        $progressiveGroups = $groupPerformance->sortByDesc('avg_score_increase')->take(10);
+        $stagnantGroups = $groupPerformance->sortBy('avg_score_increase')->take(10);
+
+        // 11. Level Effectiveness Analysis
+        $levelEffectivenessMatrix = [];
+        $levelTotals = [];
+
+        // Initialize matrix and totals
+        foreach ($levels as $initialLevel) {
+            $levelTotals[$initialLevel->name] = 0;
+            foreach ($levels as $finalLevel) {
+                $levelEffectivenessMatrix[$initialLevel->name][$finalLevel->name] = 0;
+            }
+        }
+
+        // Repurpose existing progression data
+        foreach ($levelProgressionData as $data) {
+            $initialLevelName = $data->initial_level_name;
+            $finalScore = $data->final_exam_score;
+            
+            // Determine final level based on score
+            $finalLevelId = $getFinalLevelId($finalScore);
+            $finalLevel = $levels->firstWhere('id', $finalLevelId);
+            
+            if ($finalLevel && isset($levelEffectivenessMatrix[$initialLevelName][$finalLevel->name])) {
+                $levelEffectivenessMatrix[$initialLevelName][$finalLevel->name]++;
+                $levelTotals[$initialLevelName]++;
+            }
+        }
+
+        // Convert counts to percentages
+        foreach ($levelEffectivenessMatrix as $initialLevelName => $finalLevels) {
+            foreach ($finalLevels as $finalLevelName => $count) {
+                if ($levelTotals[$initialLevelName] > 0) {
+                    $levelEffectivenessMatrix[$initialLevelName][$finalLevelName] = ($count / $levelTotals[$initialLevelName]) * 100;
+                }
+            }
+        }
+
+        // 12. Generate automatic interpretation for Level Effectiveness
+        $levelEffectivenessInterpretation = [];
+        $levelOrder = $levels->pluck('name')->all();
+
+        foreach ($levelEffectivenessMatrix as $initialLevelName => $finalLevels) {
+            $retentionRate = $finalLevels[$initialLevelName] ?? 0;
+            $currentLevelIndex = array_search($initialLevelName, $levelOrder);
+            
+            $promotionRate = 0;
+            $demotionRate = 0;
+            $promotionTargets = [];
+
+            foreach ($finalLevels as $finalLevelName => $percentage) {
+                $finalLevelIndex = array_search($finalLevelName, $levelOrder);
+                if ($finalLevelIndex > $currentLevelIndex) {
+                    $promotionRate += $percentage;
+                    $promotionTargets[$finalLevelName] = $percentage;
+                } elseif ($finalLevelIndex < $currentLevelIndex) {
+                    $demotionRate += $percentage;
+                }
+            }
+
+            $interpretation = "Nah, buat mentee yang mulai di level **{$initialLevelName}**: ";
+            $interpretation .= "yang berhasil bertahan di level ini ada sekitar **" . number_format($retentionRate, 1) . "%**. ";
+
+            if ($promotionRate > 0) {
+                arsort($promotionTargets);
+                $topTargetLevel = key($promotionTargets);
+                $topTargetPercentage = current($promotionTargets);
+                $interpretation .= "Terus, yang berhasil naik level ada sekitar **" . number_format($promotionRate, 1) . "%**, kebanyakan dari mereka naik ke level **{$topTargetLevel}**. ";
+            } else {
+                $interpretation .= "Belum ada yang berhasil naik ke level berikutnya. ";
+            }
+
+            if ($demotionRate > 0) {
+                $interpretation .= "Sayangnya, ada sekitar **" . number_format($demotionRate, 1) . "%** yang levelnya turun.";
+            }
+
+            $levelEffectivenessInterpretation[] = $interpretation;
+        }
+
 
         return view('admin.statistics.index', compact(
             'facultyStats', 
@@ -269,7 +416,13 @@ class StatisticController extends Controller
             'levelProgressionByFacultyAndLevel', 
             'scoreProgressionAnalysis', 
             'attendanceStats',
-            'individualAnalyses'
+            'individualAnalyses',
+            'mostActiveMentors',
+            'mentorsNeedingAttention',
+            'progressiveGroups',
+            'stagnantGroups',
+            'levelEffectivenessMatrix',
+            'levelEffectivenessInterpretation'
         ));
     }
 }
