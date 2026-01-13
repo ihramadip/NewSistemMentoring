@@ -101,6 +101,11 @@ Route::middleware('auth')->group(function () {
         Route::delete('mentees/bulk-destroy', [\App\Http\Controllers\Admin\MenteeController::class, 'bulkDestroy'])->name('mentees.bulkDestroy');
         Route::get('placement-tests/{placementTest}/audio', [\App\Http\Controllers\Admin\PlacementTestController::class, 'streamAudio'])->name('placement-tests.audio');
         Route::resource('placement-tests', \App\Http\Controllers\Admin\PlacementTestController::class);
+        
+        // Auto Grouping
+        Route::get('mentoring-groups/auto-grouping', [\App\Http\Controllers\Admin\AutoGroupingController::class, 'create'])->name('mentoring-groups.auto-grouping.create');
+        Route::post('mentoring-groups/auto-grouping', [\App\Http\Controllers\Admin\AutoGroupingController::class, 'store'])->name('mentoring-groups.auto-grouping.store');
+
         Route::resource('mentoring-groups', \App\Http\Controllers\Admin\MentoringGroupController::class);
         Route::resource('exams', \App\Http\Controllers\Admin\ExamController::class);
         Route::resource('exams.questions', \App\Http\Controllers\Admin\QuestionController::class);

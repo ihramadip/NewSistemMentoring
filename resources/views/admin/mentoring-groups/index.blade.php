@@ -27,6 +27,9 @@
             </x-slot>
 
             <x-slot name="actions">
+                <x-secondary-button href="{{ route('admin.mentoring-groups.auto-grouping.create') }}">
+                    {{ __('Kelompokkan Otomatis') }}
+                </x-secondary-button>
                 <x-primary-button href="{{ route('admin.mentoring-groups.create') }}">
                     {{ __('Tambah Kelompok') }}
                 </x-primary-button>

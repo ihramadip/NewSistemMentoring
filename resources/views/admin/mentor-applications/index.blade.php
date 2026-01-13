@@ -70,6 +70,9 @@
                                         Email</th>
                                     <th scope="col"
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Fakultas</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Status</th>
                                     <th scope="col"
                                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -92,6 +95,9 @@
                                             {{ $application->user->name }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                             {{ $application->user->email }}
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {{ $application->user->faculty->name ?? 'N/A' }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                             @php
@@ -127,7 +133,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="6" {{-- Adjusted colspan for the new checkbox column --}}
+                                        <td colspan="7" {{-- Adjusted colspan for the new checkbox column --}}
                                             class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
                                             Belum ada data pendaftaran mentor.
                                         </td>

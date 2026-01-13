@@ -56,6 +56,14 @@ class User extends Authenticatable
                     ->withTimestamps();
     }
 
+    public function groupMember() {
+        return $this->hasOne(GroupMember::class, 'mentee_id');
+    }
+
+    public function placementTest() {
+        return $this->hasOne(PlacementTest::class, 'mentee_id');
+    }
+
     // Applications
     public function mentorApplication() {
         return $this->hasOne(MentorApplication::class);

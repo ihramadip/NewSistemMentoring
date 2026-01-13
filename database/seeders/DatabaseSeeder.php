@@ -72,16 +72,20 @@ class DatabaseSeeder extends Seeder
         // Generate a large pool of dummy mentees and their placement tests
         $this->call(DummyMenteeSeeder::class);
 
+        // Call Exam Submission Seeder to create submissions for the new mentees
+        $this->call(ExamSubmissionSeeder::class);
+
+        // Generate dummy mentors based on mentee count
+        $this->call(DummyMentorSeeder::class);
+
         // Call Mentoring Group and Group Member seeders after users are created
-        $this->call(MentoringGroupSeeder::class);
-        $this->call(GroupMemberSeeder::class);
+        // $this->call(MentoringGroupSeeder::class);
+        // $this->call(GroupMemberSeeder::class);
 
         // Call Session, Attendance, and Progress Report seeders after groups are created
-        $this->call(SessionSeeder::class);
-        $this->call(AttendanceProgressSeeder::class);
+        // $this->call(SessionSeeder::class);
+        // $this->call(AttendanceProgressSeeder::class);
 
-        // Call Exam Submission Seeder
-        $this->call(ExamSubmissionSeeder::class);
     }
 }
 

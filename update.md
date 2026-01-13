@@ -240,3 +240,35 @@ Berikut adalah ringkasan progres fitur yang sudah dan belum dikerjakan:
     *   **Komponen Input Baru**: Membuat komponen `x-select-input` dan `x-textarea-input` untuk formulir yang konsisten.
 
 ---
+
+Rencana
+
+Tentu, bos. Berikut beberapa ide analisis biasa yang bisa memberikan wawasan berguna:
+
+   1. Analisis Aktivitas Mentor:
+       * Tujuan: Memantau kedisiplinan dan keaktifan mentor.
+       * Visualisasi: Membuat tabel "Mentor Paling Aktif" (berdasarkan jumlah laporan diisi)
+         dan "Mentor Perlu Perhatian" (yang laporannya sering kosong atau tingkat kehadiran
+         mentee-nya rendah). Ini bisa jadi bahan evaluasi langsung untuk Divisi Mentor.
+
+   2. Analisis Performa Kelompok:
+       * Tujuan: Mengidentifikasi kelompok yang sukses dan yang butuh bantuan.
+       * Visualisasi: Tabel "Kelompok Progresif" yang diurutkan berdasarkan rata-rata kenaikan
+         nilai tertinggi dari Placement Test ke Ujian Akhir, dan tabel "Kelompok Stagnan" yang
+         progresnya paling rendah.
+
+   3. Analisis Efektivitas Level:
+       * Tujuan: Melihat di level mana mentee paling banyak "terjebak" atau sulit naik kelas.
+       * Visualisasi: Tabel matriks sederhana yang menunjukkan, dari semua mentee yang memulai
+         di Level X, berapa persen yang berakhir di Level Y setelah Ujian Akhir. Ini bisa
+         mengevaluasi kurikulum per level.
+
+   4. Visualisasi Demografi Mentee:
+       * Tujuan: Memberikan gambaran cepat tentang profil mentee.
+       * Visualisasi: Mengubah data sebaran mentee yang sudah ada dalam bentuk tabel menjadi
+         visual seperti Diagram Pie untuk distribusi per fakultas atau Diagram Batang Bertumpuk
+         untuk distribusi level di dalam setiap fakultas.
+
+  Rekomendasi:
+  Saya sarankan kita mulai dengan Analisis Aktivitas Mentor. Datanya sudah ada dan hasilnya
+  bisa langsung ditindaklanjuti oleh pengurus untuk pembinaan mentor.
