@@ -284,3 +284,43 @@ Berikut adalah ringkasan progres fitur yang sudah dan belum dikerjakan:
    * **Logika Backend**: Mengimplementasikan logika di `Admin\StatisticController.php` untuk membuat matriks transisi level (persentase mentee dari level awal ke level akhir).
    * **Interpretasi Otomatis**: Menambahkan interpretasi otomatis (dalam bahasa awam) untuk matriks tersebut di `Admin\StatisticController.php`.
    * **UI**: Menampilkan tabel matriks di view dengan penyorotan diagonal untuk tingkat retensi level.
+
+
+   1. Perbaikan Bug:
+       * StatisticController.php: TypeError untuk array_column pada Koleksi Eloquent.
+       * index.blade.php: Undefined array key "name" error untuk akses kunci array
+         $levels.
+       * index.blade.php: Kesalahan sintaks Blade @app... alih-alih @if.
+       * StatisticController.php: Pengerasan logika untuk Level Effectiveness Matrix
+         (data_get untuk ketahanan cache).
+       * StatisticController.php: Perbaikan untuk bug penyortiran "Performa Kelompok"
+         (avg_score_increase vs avg_score_increase_percentage).
+
+   2. Penambahan/Peningkatan Fitur:
+       * Fitur "Mentoring Tambahan" (Tambahan Mentoring):
+           * Database: Tabel additional_sessions dan model AdditionalSession.
+           * Rute: Rute sumber daya untuk additional-sessions (CRUD khusus mentee).
+           * Pengontrol: AdditionalSessionController dengan logika CRUD.
+           * Tampilan: create.blade.php, edit.blade.php, dan modifikasi index.blade.php
+             untuk tabel dan tombol.
+           * Pembaruan Pengontrol: MenteeSessionController untuk mengambil sesi
+             tambahan.
+           * Peningkatan Tampilan: Tombol "Tambah Sesi" selalu terlihat.
+           * Peningkatan Tampilan: Konsistensi gaya tombol "Tambah Sesi".
+       * Fitur "Pelatihan Mentor" (Pelatihan Mentor):
+           * Database: Tabel mentor_trainings dan model MentorTraining.
+           * Pengontrol: Admin\MentorTrainingController (awalnya
+             Mentor\TrainingController).
+           * Rute:
+               * Mentor: Rute hanya lihat (mentor.trainings.index).
+               * Admin: Rute sumber daya CRUD penuh (admin.mentor-trainings).
+           * Tampilan: index.blade.php (tampilan mentor), create.blade.php,
+             edit.blade.php (tampilan admin).
+           * Integrasi Sidebar: Tautan ditambahkan ke sidebar mentor.
+           * Refactoring berdasarkan umpan balik pengguna:
+               * Memindahkan pengontrol ke namespace Admin.
+               * Memindahkan tampilan CRUD admin ke
+                 resources/views/admin/mentor-trainings.
+               * Menambahkan tampilan kondisional tindakan CRUD di
+                 resources/views/mentor/trainings/index.blade.php hanya untuk Admin.
+               * Memperbarui tautan sidebar untuk Admin dan Mentor.

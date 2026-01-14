@@ -87,6 +87,21 @@
                             </table>
                         </div>
                     </div>
+                    <!-- Interpretation for Faculty Stats -->
+                    <div class="p-6 pt-0 text-gray-900 dark:text-gray-100">
+                        <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
+                            <h4 class="text-md font-semibold text-gray-800 dark:text-gray-200 mb-2">Interpretasi</h4>
+                            @if(!empty($facultyStatsInterpretation))
+                                <ul class="list-disc pl-5 space-y-1 text-sm text-gray-700 dark:text-gray-300">
+                                    @foreach($facultyStatsInterpretation as $interpretation)
+                                        <li>{!! $interpretation !!}</li>
+                                    @endforeach
+                                </ul>
+                            @else
+                                <p class="text-sm text-gray-500">Tidak ada cukup data untuk interpretasi.</p>
+                            @endif
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Level Distribution per Faculty -->
@@ -99,7 +114,7 @@
                                     <tr>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Fakultas</th>
                                         @foreach($levels as $level)
-                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{{ $level->name }}</th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{{ data_get($level, 'name') }}</th>
                                         @endforeach
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Total</th>
                                     </tr>
@@ -109,17 +124,32 @@
                                         <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{{ $faculty }}</td>
                                             @foreach($levels as $level)
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{{ $data[$level->name] ?? 0 }}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{{ $data[data_get($level, 'name')] ?? 0 }}</td>
                                             @endforeach
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-700 dark:text-gray-300">{{ $data['total'] }}</td>
                                         </tr>
                                     @empty
-                                         <tr>
+                                        <tr>
                                             <td colspan="{{ count($levels) + 2 }}" class="px-6 py-4 text-center text-sm text-gray-500">Data tidak ditemukan.</td>
                                         </tr>
                                     @endforelse
                                 </tbody>
                             </table>
+                        </div>
+                    </div>
+                    <!-- Interpretation for Level Distribution -->
+                    <div class="p-6 pt-0 text-gray-900 dark:text-gray-100">
+                        <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
+                            <h4 class="text-md font-semibold text-gray-800 dark:text-gray-200 mb-2">Interpretasi</h4>
+                            @if(!empty($levelDistributionInterpretation))
+                                <ul class="list-disc pl-5 space-y-1 text-sm text-gray-700 dark:text-gray-300">
+                                    @foreach($levelDistributionInterpretation as $interpretation)
+                                        <li>{!! $interpretation !!}</li>
+                                    @endforeach
+                                </ul>
+                            @else
+                                <p class="text-sm text-gray-500">Tidak ada cukup data untuk interpretasi.</p>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -159,6 +189,21 @@
                             </table>
                         </div>
                     </div>
+                    <!-- Interpretation for Attendance Stats -->
+                    <div class="p-6 pt-0 text-gray-900 dark:text-gray-100">
+                        <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
+                            <h4 class="text-md font-semibold text-gray-800 dark:text-gray-200 mb-2">Interpretasi</h4>
+                            @if(!empty($attendanceStatsInterpretation))
+                                <ul class="list-disc pl-5 space-y-1 text-sm text-gray-700 dark:text-gray-300">
+                                    @foreach($attendanceStatsInterpretation as $interpretation)
+                                        <li>{!! $interpretation !!}</li>
+                                    @endforeach
+                                </ul>
+                            @else
+                                <p class="text-sm text-gray-500">Tidak ada cukup data untuk interpretasi.</p>
+                            @endif
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -172,6 +217,21 @@
                             <canvas id="scoreComparisonChartByProgram"></canvas>
                         </div>
                     </div>
+                    <!-- Interpretation for Score Comparison Chart -->
+                    <div class="p-6 pt-0 text-gray-900 dark:text-gray-100">
+                        <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
+                            <h4 class="text-md font-semibold text-gray-800 dark:text-gray-200 mb-2">Interpretasi</h4>
+                            @if(!empty($scoreComparisonInterpretation))
+                                <ul class="list-disc pl-5 space-y-1 text-sm text-gray-700 dark:text-gray-300">
+                                    @foreach($scoreComparisonInterpretation as $interpretation)
+                                        <li>{!! $interpretation !!}</li>
+                                    @endforeach
+                                </ul>
+                            @else
+                                <p class="text-sm text-gray-500">Tidak ada cukup data untuk interpretasi.</p>
+                            @endif
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Score Progression Chart (Individual) -->
@@ -182,17 +242,50 @@
                             <canvas id="scoreProgressionChart"></canvas>
                         </div>
                     </div>
+                    <!-- Interpretation for Score Progression Chart -->
+                    <div class="p-6 pt-0 text-gray-900 dark:text-gray-100">
+                        <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
+                            <h4 class="text-md font-semibold text-gray-800 dark:text-gray-200 mb-2">Interpretasi</h4>
+                            @if(!empty($scoreProgressionInterpretation))
+                                <ul class="list-disc pl-5 space-y-1 text-sm text-gray-700 dark:text-gray-300">
+                                    @foreach($scoreProgressionInterpretation as $interpretation)
+                                        <li>{!! $interpretation !!}</li>
+                                    @endforeach
+                                </ul>
+                            @else
+                                <p class="text-sm text-gray-500">Tidak ada cukup data untuk interpretasi.</p>
+                            @endif
+                        </div>
+                    </div>
                 </div>
 
 
                 <!-- Level Progression Charts -->
                 <div>
                     <h3 class="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-200">Analisis Progresi Level per Fakultas</h3>
+                    <!-- Interpretation for Level Progression -->
+                    <div class="mb-6 bg-gray-50 dark:bg-gray-900/50 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+                        <h4 class="text-md font-semibold text-gray-800 dark:text-gray-200 mb-2">Interpretasi Umum</h4>
+                        @if(!empty($levelProgressionInterpretation))
+                            <ul class="list-disc pl-5 space-y-1 text-sm text-gray-700 dark:text-gray-300">
+                                @foreach($levelProgressionInterpretation as $interpretation)
+                                    <li>{!! $interpretation !!}</li>
+                                @endforeach
+                            </ul>
+                        @else
+                            <p class="text-sm text-gray-500">Tidak ada cukup data untuk interpretasi.</p>
+                        @endif
+                    </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         @forelse($levelProgressionByFacultyAndLevel as $facultyName => $progression)
                             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                                 <div class="p-6 text-gray-900 dark:text-gray-100">
                                     <h4 class="text-xl font-semibold mb-4">{{ $facultyName }}</h4>
+                                    @if(isset($levelProgressionByFacultyInterpretation[$facultyName]))
+                                        <blockquote class="p-4 my-4 border-s-4 border-gray-300 bg-gray-50 dark:border-gray-500 dark:bg-gray-800">
+                                            <p class="text-sm italic font-medium leading-relaxed text-gray-900 dark:text-white">{!! $levelProgressionByFacultyInterpretation[$facultyName] !!}</p>
+                                        </blockquote>
+                                    @endif
                                     <div class="h-80">
                                         <canvas id="progressionChart-{{ $loop->index }}"></canvas>
                                     </div>
@@ -216,8 +309,8 @@
                         <form method="GET" action="{{ route('admin.statistics.index') }}" class="mb-4">
                             <div class="flex items-center">
                                 <input type="text" name="search" placeholder="Cari berdasarkan nama atau NPM..."
-                                       class="block w-full md:w-1/3 border-gray-300 focus:border-brand-teal focus:ring-brand-teal rounded-md shadow-sm text-sm"
-                                       value="{{ request('search') }}">
+                                    class="block w-full md:w-1/3 border-gray-300 focus:border-brand-teal focus:ring-brand-teal rounded-md shadow-sm text-sm"
+                                    value="{{ request('search') }}">
                                 <x-primary-button type="submit" class="ml-2">
                                     Cari
                                 </x-primary-button>
@@ -346,7 +439,7 @@
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6 text-gray-900 dark:text-gray-100">
                         <h3 class="text-xl font-semibold mb-4 text-green-700 dark:text-green-500">Kelompok Paling Progresif (Top 10)</h3>
-                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Diurutkan berdasarkan persentase kenaikan rata-rata nilai tertinggi dari Placement Test ke Ujian Akhir.</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Diurutkan berdasarkan kenaikan poin absolut tertinggi dari Placement Test ke Ujian Akhir.</p>
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                                 <thead class="bg-gray-50 dark:bg-gray-700">
@@ -354,6 +447,7 @@
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Nama Kelompok</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Mentor</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Kenaikan Rata-rata Nilai (%)</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Kategori</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
@@ -364,10 +458,21 @@
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-green-700 dark:text-green-500">
                                                 +{{ number_format($group->avg_score_increase_percentage, 2) }}%
                                             </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                @if($group->category == 'Progres Sangat Baik')
+                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                                        {{ $group->category }}
+                                                    </span>
+                                                @else
+                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                                        {{ $group->category }}
+                                                    </span>
+                                                @endif
+                                            </td>
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="3" class="px-6 py-4 text-center text-sm text-gray-500">Data tidak ditemukan.</td>
+                                            <td colspan="4" class="px-6 py-4 text-center text-sm text-gray-500">Data tidak ditemukan.</td>
                                         </tr>
                                     @endforelse
                                 </tbody>
@@ -380,7 +485,7 @@
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6 text-gray-900 dark:text-gray-100">
                         <h3 class="text-xl font-semibold mb-4 text-red-700 dark:text-red-500">Kelompok Paling Stagnan (Top 10)</h3>
-                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Diurutkan berdasarkan persentase kenaikan rata-rata nilai terendah (atau penurunan) dari Placement Test ke Ujian Akhir.</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Diurutkan berdasarkan kenaikan poin absolut terendah (atau penurunan) dari Placement Test ke Ujian Akhir.</p>
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                                 <thead class="bg-gray-50 dark:bg-gray-700">
@@ -388,6 +493,7 @@
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Nama Kelompok</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Mentor</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Perubahan Rata-rata Nilai (%)</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Kategori</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
@@ -396,12 +502,23 @@
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{{ $group->group_name }}</td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{{ $group->mentor_name }}</td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold @if($group->avg_score_increase_percentage < 0) text-red-700 dark:text-red-500 @else text-yellow-700 dark:text-yellow-500 @endif">
-                                                {{ $group->avg_score_increase_percentage > 0 ? '+' : '' }}{{ number_format($group->avg_score_increase_percentage, 2) }}%
+                                                {{ $group->avg_score_increase_percentage >= 0 ? '+' : '' }}{{ number_format($group->avg_score_increase_percentage, 2) }}%
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                @if($group->category == 'Perlu Perhatian')
+                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                                        {{ $group->category }}
+                                                    </span>
+                                                @else
+                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                                        {{ $group->category }}
+                                                    </span>
+                                                @endif
                                             </td>
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="3" class="px-6 py-4 text-center text-sm text-gray-500">Data tidak ditemukan.</td>
+                                            <td colspan="4" class="px-6 py-4 text-center text-sm text-gray-500">Data tidak ditemukan.</td>
                                         </tr>
                                     @endforelse
                                 </tbody>
@@ -426,7 +543,7 @@
                                         </th>
                                         @foreach($levels as $level)
                                             <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider border-b border-gray-200 dark:border-gray-700">
-                                                ke: {{ $level->name }}
+                                                ke: {{ data_get($level, 'name') }}
                                             </th>
                                         @endforeach
                                     </tr>
@@ -437,8 +554,9 @@
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-700">{{ $initialLevelName }}</td>
                                             @foreach($levels as $level)
                                                 @php
-                                                    $percentage = $finalLevels[$level->name] ?? 0;
-                                                    $isDiagonal = $initialLevelName === $level->name;
+                                                    $levelName = data_get($level, 'name');
+                                                    $percentage = $finalLevels[$levelName] ?? 0;
+                                                    $isDiagonal = $initialLevelName === $levelName;
                                                 @endphp
                                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-center font-semibold 
                                                     @if($isDiagonal) bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300
@@ -455,7 +573,7 @@
                                 </tbody>
                             </table>
                         </div>
-                         <p class="text-xs text-gray-500 dark:text-gray-400 mt-4">Keterangan: Baris menunjukkan level awal mentee, kolom menunjukkan level akhir mentee setelah ujian. Sel yang diberi highlight biru menunjukkan persentase mentee yang tetap (tidak naik/turun) di level tersebut.</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-4">Keterangan: Baris menunjukkan level awal mentee, kolom menunjukkan level akhir mentee setelah ujian. Sel yang diberi highlight biru menunjukkan persentase mentee yang tetap (tidak naik/turun) di level tersebut.</p>
                     </div>
                 </div>
 
@@ -578,7 +696,7 @@
 
             // Charts 2: Granular Level Progression
             const progressionData = @json($levelProgressionByFacultyAndLevel);
-            const levelNames = @json($levels->pluck('name'));
+            const levelNames = @json($levelNames);
 
             Object.keys(progressionData).forEach((facultyName, index) => {
                 const canvasId = `progressionChart-${index}`;

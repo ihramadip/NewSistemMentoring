@@ -48,6 +48,7 @@ Route::get('/program/{slug}', function (string $slug) {
 
         Route::resource('sessions', \App\Http\Controllers\Mentor\SessionController::class);
         Route::resource('reports', \App\Http\Controllers\Mentor\ProgressReportController::class);
+        Route::get('trainings', [\App\Http\Controllers\Admin\MentorTrainingController::class, 'index'])->name('trainings.index');
     });
 
 Route::middleware(['auth', 'mentee'])->group(function () {
@@ -66,6 +67,8 @@ Route::middleware(['auth', 'mentee'])->group(function () {
 
     // Mentee Sessions
     Route::get('/sessions', [\App\Http\Controllers\MenteeSessionController::class, 'index'])->name('mentee.sessions.index');
+Route::resource('additional-sessions', \App\Http\Controllers\AdditionalSessionController::class)->middleware(['auth', 'mentee']);
+
 
     // Mentee Report
     Route::get('/report', [\App\Http\Controllers\MenteeReportController::class, 'index'])->name('mentee.report.index');
@@ -113,6 +116,8 @@ Route::middleware('auth')->group(function () {
         Route::resource('mentoring-groups', \App\Http\Controllers\Admin\MentoringGroupController::class);
         Route::resource('exams', \App\Http\Controllers\Admin\ExamController::class);
         Route::resource('exams.questions', \App\Http\Controllers\Admin\QuestionController::class);
+        Route::resource('mentor-trainings', \App\Http\Controllers\Admin\MentorTrainingController::class);
+
 
         // Final Exam Grading
         Route::resource('final-exam-grading', \App\Http\Controllers\Admin\FinalExamGradingController::class)

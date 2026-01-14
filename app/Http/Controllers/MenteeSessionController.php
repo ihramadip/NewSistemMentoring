@@ -8,6 +8,7 @@ use App\Models\MentoringGroup;
 use App\Models\Session;
 use App\Models\Attendance;
 use App\Models\ProgressReport;
+use App\Models\AdditionalSession;
 
 class MenteeSessionController extends Controller
 {
@@ -19,6 +20,7 @@ class MenteeSessionController extends Controller
         if ($user->role->name === 'Admin') {
             return view('mentee.sessions.index', [
                 'sessions' => collect(), // Empty collection
+                'additionalSessions' => collect(),
                 'mentoringGroup' => null
             ]);
         }
@@ -40,7 +42,12 @@ class MenteeSessionController extends Controller
                             }])
                             ->orderBy('date', 'asc')
                             ->get();
+        
+        // Get all additional sessions for this mentee
+        $additionalSessions = AdditionalSession::where('mentee_id', $user->id)
+                                                ->orderBy('date', 'asc')
+                                                ->get();
 
-        return view('mentee.sessions.index', compact('sessions', 'mentoringGroup'));
+        return view('mentee.sessions.index', compact('sessions', 'mentoringGroup', 'additionalSessions'));
     }
 }

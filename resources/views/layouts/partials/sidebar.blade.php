@@ -74,9 +74,11 @@
                                                     <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                                         <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m-7.5-2.962A3 3 0 0115 9.185a3 3 0 01-4.5 2.72m-7.5-2.962a3 3 0 00-4.682 2.72 8.982 8.982 0 003.741.479M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                                     </svg>
-                                                    <span>Manajemen Kelompok Mentoring</span>
-                                                </a>
-                <a href="{{ route('admin.announcements.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.announcements.*') ? 'bg-brand-teal' : 'hover:bg-white/10' }}">
+                                                                                                    </a>
+                                                                    <a href="{{ route('admin.mentor-trainings.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.mentor-trainings.*') ? 'bg-brand-teal' : 'hover:bg-white/10' }}">
+                                                                        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.098 19.902a3.75 3.75 0 005.304 0l6.401-6.402M6.75 21A3.75 3.75 0 013 17.25V4.125C3 3.504 3.504 3 4.125 3h5.25c.621 0 1.125.504 1.125 1.125v4.072M10.5 21A3.75 3.75 0 0014.25 17.25V4.125C14.25 3.504 14.754 3 15.375 3h5.25c.621 0 1.125.504 1.125 1.125v13.125v0c0 1.025-.56 1.905-1.381 2.398M16.5 21V6" /></svg>
+                                                                        <span>Manajemen Pelatihan Mentor</span>
+                                                                    </a>                <a href="{{ route('admin.announcements.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.announcements.*') ? 'bg-brand-teal' : 'hover:bg-white/10' }}">
                     <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.34 15.84c-.688 0-1.25-.562-1.25-1.25s.562-1.25 1.25-1.25h3.32c.688 0 1.25.562 1.25 1.25s-.562 1.25-1.25 1.25h-3.32zM9 19.5h6" /></svg>
                     <span>Pengumuman</span>
                 </a>
@@ -119,6 +121,10 @@
                         <path d="M13.28 5.72a.75.75 0 00-1.06-1.06l-4.5 4.5a.75.75 0 000 1.06l4.5 4.5a.75.75 0 101.06-1.06L9.28 10.5l4-4.78z" />
                     </svg>
                     <span>Progres Mentee</span>
+                </a>
+                <a href="{{ route('mentor.trainings.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('mentor.trainings.*') ? 'bg-brand-teal' : 'hover:bg-white/10' }}">
+                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.098 19.902a3.75 3.75 0 005.304 0l6.401-6.402M6.75 21A3.75 3.75 0 013 17.25V4.125C3 3.504 3.504 3 4.125 3h5.25c.621 0 1.125.504 1.125 1.125v4.072M10.5 21A3.75 3.75 0 0014.25 17.25V4.125C14.25 3.504 14.754 3 15.375 3h5.25c.621 0 1.125.504 1.125 1.125v13.125v0c0 1.025-.56 1.905-1.381 2.398M16.5 21V6" /></svg>
+                    <span>Pelatihan Mentor</span>
                 </a>
             </div>
         </div>
