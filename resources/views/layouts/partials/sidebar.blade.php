@@ -42,6 +42,7 @@
         <div>
             <h2 class="px-2 text-xs font-semibold uppercase tracking-wider text-white/60">Admin</h2>
             <div class="mt-1 space-y-1">
+                {{-- Manajemen --}}
                 <a href="{{ route('admin.mentor-applications.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.mentor-applications.*') ? 'bg-brand-teal' : 'hover:bg-white/10' }}">
                     <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m-7.5-2.962A3 3 0 0115 9.185a3 3 0 01-4.5 2.72m-7.5-2.962a3 3 0 00-4.682 2.72 8.982 8.982 0 003.741.479M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                     <span>Manajemen Pementor</span>
@@ -50,6 +51,36 @@
                     <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-4.67c.12-.313.253-.617.4-1.022a4.125 4.125 0 00-7.533-2.493c-3.693 0-6.105 2.818-6.105 6.375a6.375 6.375 0 004.121 5.952v-.003c1.113 0 2.16-.285 3.07-.786z" /></svg>
                     <span>Manajemen Mentee</span>
                 </a>
+                <a href="{{ route('admin.mentoring-groups.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.mentoring-groups.*') ? 'bg-brand-teal' : 'hover:bg-white/10' }}">
+                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m-7.5-2.962A3 3 0 0115 9.185a3 3 0 01-4.5 2.72m-7.5-2.962a3 3 0 00-4.682 2.72 8.982 8.982 0 003.741.479M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>Manajemen Kelompok</span>
+                </a>
+                <a href="{{ route('admin.materials.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.materials.*') ? 'bg-brand-teal' : 'hover:bg-white/10' }}">
+                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 1.087M3.75 9h16.5" /></svg>
+                    <span>Manajemen Materi</span>
+                </a>
+                <a href="{{ route('admin.exams.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.exams.*') ? 'bg-brand-teal' : 'hover:bg-white/10' }}">
+                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12H12m-2.25 4.5H12M12 18.75V15m-1.5 2.25l-1.5-1.5m1.5 1.5l1.5-1.5M12 18.75L10.5 17.25M12 18.75L13.5 17.25M12 14.25h-2.25M15 11.25H9M15 12h-2.25" />
+                    </svg>
+                    <span>Manajemen Ujian</span>
+                </a>
+                <a href="{{ route('admin.mentor-trainings.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.mentor-trainings.*') ? 'bg-brand-teal' : 'hover:bg-white/10' }}">
+                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.098 19.902a3.75 3.75 0 005.304 0l6.401-6.402M6.75 21A3.75 3.75 0 013 17.25V4.125C3 3.504 3.504 3 4.125 3h5.25c.621 0 1.125.504 1.125 1.125v4.072M10.5 21A3.75 3.75 0 0014.25 17.25V4.125C14.25 3.504 14.754 3 15.375 3h5.25c.621 0 1.125.504 1.125 1.125v13.125v0c0 1.025-.56 1.905-1.381 2.398M16.5 21V6" /></svg>
+                    <span>Manajemen Pelatihan Mentor</span>
+                </a>
+                <a href="{{ route('admin.faculties.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.faculties.*') ? 'bg-brand-teal' : 'hover:bg-white/10' }}">
+                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 1.087M3.75 9h16.5" /></svg>
+                    <span>Manajemen Fakultas</span>
+                </a>
+                <a href="{{ route('admin.levels.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.levels.*') ? 'bg-brand-teal' : 'hover:bg-white/10' }}">
+                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4.5h14.25M3 9h9.75M3 13.5h5.25m5.25-.75L17.25 9m0 0L21 12.75M17.25 9v12" /></svg>
+                    <span>Manajemen Level</span>
+                </a>
+                
+                {{-- Penilaian --}}
                 <a href="{{ route('admin.placement-tests.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.placement-tests.*') ? 'bg-brand-teal' : 'hover:bg-white/10' }}">
                     <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 100 15 7.5 7.5 0 000-15z" /><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.25-5.25" /></svg>
                     <span>Nilai Placement Test</span>
@@ -60,39 +91,11 @@
                     </svg>
                     <span>Nilai Ujian Akhir</span>
                 </a>
-                                                 <a href="{{ route('admin.materials.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.materials.*') ? 'bg-brand-teal' : 'hover:bg-white/10' }}">
-                                                     <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 1.087M3.75 9h16.5" /></svg>
-                                                     <span>Manajemen Materi</span>
-                                                 </a>
-                                                 <a href="{{ route('admin.exams.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.exams.*') ? 'bg-brand-teal' : 'hover:bg-white/10' }}">
-                                                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12H12m-2.25 4.5H12M12 18.75V15m-1.5 2.25l-1.5-1.5m1.5 1.5l1.5-1.5M12 18.75L10.5 17.25M12 18.75L13.5 17.25M12 14.25h-2.25M15 11.25H9M15 12h-2.25" />
-                                                    </svg>
-                                                    <span>Manajemen Ujian</span>
-                                                </a>
-                                                <a href="{{ route('admin.mentoring-groups.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.mentoring-groups.*') ? 'bg-brand-teal' : 'hover:bg-white/10' }}">
-                                                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m-7.5-2.962A3 3 0 0115 9.185a3 3 0 01-4.5 2.72m-7.5-2.962a3 3 0 00-4.682 2.72 8.982 8.982 0 003.741.479M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                    </svg>
-                                                                                                    </a>
-                                                                    <a href="{{ route('admin.mentor-trainings.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.mentor-trainings.*') ? 'bg-brand-teal' : 'hover:bg-white/10' }}">
-                                                                        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.098 19.902a3.75 3.75 0 005.304 0l6.401-6.402M6.75 21A3.75 3.75 0 013 17.25V4.125C3 3.504 3.504 3 4.125 3h5.25c.621 0 1.125.504 1.125 1.125v4.072M10.5 21A3.75 3.75 0 0014.25 17.25V4.125C14.25 3.504 14.754 3 15.375 3h5.25c.621 0 1.125.504 1.125 1.125v13.125v0c0 1.025-.56 1.905-1.381 2.398M16.5 21V6" /></svg>
-                                                                        <span>Manajemen Pelatihan Mentor</span>
-                                                                    </a>                <a href="{{ route('admin.announcements.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.announcements.*') ? 'bg-brand-teal' : 'hover:bg-white/10' }}">
+
+                {{-- Lainnya --}}
+                <a href="{{ route('admin.announcements.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.announcements.*') ? 'bg-brand-teal' : 'hover:bg-white/10' }}">
                     <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.34 15.84c-.688 0-1.25-.562-1.25-1.25s.562-1.25 1.25-1.25h3.32c.688 0 1.25.562 1.25 1.25s-.562 1.25-1.25 1.25h-3.32zM9 19.5h6" /></svg>
                     <span>Pengumuman</span>
-                </a>
-            </div>
-            
-            <div class="mt-4">
-                <h3 class="px-2 text-xs font-semibold uppercase tracking-wider text-white/60">Data Master</h3>
-                <a href="{{ route('admin.faculties.index') }}" class="mt-1 flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.faculties.*') ? 'bg-brand-teal' : 'hover:bg-white/10' }}">
-                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 1.087M3.75 9h16.5" /></svg>
-                    <span>Manajemen Fakultas</span>
-                </a>
-                <a href="{{ route('admin.levels.index') }}" class="mt-1 flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.levels.*') ? 'bg-brand-teal' : 'hover:bg-white/10' }}">
-                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4.5h14.25M3 9h9.75M3 13.5h5.25m5.25-.75L17.25 9m0 0L21 12.75M17.25 9v12" /></svg>
-                    <span>Manajemen Level</span>
                 </a>
             </div>
         </div>
