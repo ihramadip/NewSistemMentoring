@@ -2,16 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use App\Models\MentoringGroup;
-use App\Models\Session;
-use App\Models\Attendance;
-use App\Models\ProgressReport;
-use App\Models\AdditionalSession;
+use App\Services\MenteeSessionService;
+use Illuminate\Support\Facades\Auth;
 
 class MenteeSessionController extends Controller
 {
+    protected $menteeSessionService;
+
+    public function __construct(MenteeSessionService $menteeSessionService)
+    {
+        $this->menteeSessionService = $menteeSessionService;
+    }
+
     public function index()
     {
         $user = Auth::user();
@@ -25,29 +28,12 @@ class MenteeSessionController extends Controller
             ]);
         }
         
-        // Mentee view:
-        // Get the mentoring group(s) the mentee is part of
-        $mentoringGroup = $user->mentoringGroupsAsMentee()->first();
+        $sessionData = $this->menteeSessionService->getSessions($user);
 
-        if (!$mentoringGroup) {
+        if (!$sessionData['mentoringGroup']) {
             return redirect()->route('dashboard')->with('warning', 'You have not been assigned to a mentoring group yet to view sessions.');
         }
 
-        // Get all sessions for this mentee's group, with their attendance and progress report for each
-        $sessions = Session::where('mentoring_group_id', $mentoringGroup->id)
-                            ->with(['attendances' => function($query) use ($user) {
-                                $query->where('mentee_id', $user->id);
-                            }, 'progressReports' => function($query) use ($user) {
-                                $query->where('mentee_id', $user->id);
-                            }])
-                            ->orderBy('date', 'asc')
-                            ->get();
-        
-        // Get all additional sessions for this mentee
-        $additionalSessions = AdditionalSession::where('mentee_id', $user->id)
-                                                ->orderBy('date', 'asc')
-                                                ->get();
-
-        return view('mentee.sessions.index', compact('sessions', 'mentoringGroup', 'additionalSessions'));
+        return view('mentee.sessions.index', $sessionData);
     }
 }

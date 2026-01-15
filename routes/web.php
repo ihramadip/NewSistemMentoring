@@ -46,6 +46,7 @@ Route::get('/program/{slug}', function (string $slug) {
         Route::get('group/{group}/new-session', [\App\Http\Controllers\Mentor\SessionController::class, 'create'])->name('sessions.create-for-group');
         Route::post('group/{group}/new-session', [\App\Http\Controllers\Mentor\SessionController::class, 'store'])->name('sessions.store-for-group');
 
+        Route::get('sessions/create-step-1', [\App\Http\Controllers\Mentor\SessionController::class, 'selectGroupForSession'])->name('sessions.select-group');
         Route::resource('sessions', \App\Http\Controllers\Mentor\SessionController::class);
         Route::resource('reports', \App\Http\Controllers\Mentor\ProgressReportController::class);
         Route::get('trainings', [\App\Http\Controllers\Admin\MentorTrainingController::class, 'index'])->name('trainings.index');

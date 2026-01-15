@@ -81,25 +81,28 @@ The `PlacementTestSubmissionController` was a "Fat Controller" that violated sev
 1.  **Transitioned to a Data-Driven Model:**
     *   **Purpose:** To decouple the questions from the application's code, improving maintainability and scalability.
     *   **Impact:**
-        *   **Polymorphic Relationship:** The `questions` table was migrated to use a polymorphic relationship (`questionable`). This allows the `Question` model to be reused by both `Exam` and the new `PlacementTestDefinition` model.
-        *   **Database Seeding:** A `PlacementTestQuestionSeeder` was created to move the hardcoded questions into the database, making them manageable as data rather than code.
+        *   **Maintainability:** Moving questions to the database (via `PlacementTestQuestionSeeder`) makes them manageable as data, not code.
+        *   **Scalability:** The data-driven model allows for easier expansion of the question bank.
+        *   **Reusability:** The `questions` table's polymorphic relationship (`questionable`) allows the `Question` model to be reused by both `Exam` and `PlacementTestDefinition`.
 
 2.  **Created `StorePlacementTestRequest` (app/Http/Requests/StorePlacementTestRequest.php):**
     *   **Purpose:** To centralize validation rules for the placement test submission.
     *   **Impact:**
-        *   **Maintainability & Readability:** The controller is no longer cluttered with validation logic. Rules are in a dedicated, reusable class.
+        *   **Readability:** The controller is no longer cluttered with validation logic.
+        *   **Maintainability:** Rules are in a dedicated, reusable class, making them easier to find and modify.
 
 3.  **Created `PlacementTestService` (app/Services/PlacementTestService.php):**
     *   **Purpose:** To encapsulate all business logic related to the test submission.
     *   **Impact:**
-        *   **Maintainability & Testability:** The core logic (calculating the theory score from database values, storing the audio file, creating the submission record) is now in an isolated, testable service.
-        *   **Reliability:** The entire submission process is wrapped in a database transaction. If any part fails, the database record is not created, and the service attempts to clean up the newly uploaded audio file to prevent orphaned files.
-        *   **Readability:** The service's `handleSubmission` method has a clear and single responsibility.
+        *   **Testability:** The core logic (score calculation, file storage, etc.) is now in an isolated, testable service.
+        *   **Reliability:** The entire submission process is wrapped in a database transaction, with cleanup logic for file uploads on failure, preventing orphaned files and inconsistent data.
+        *   **Readability:** The service's `handleSubmission` method has a clear, single responsibility.
 
 4.  **Refactored `PlacementTestSubmissionController` (app/Http/Controllers/PlacementTestSubmissionController.php):**
     *   **Purpose:** To act as a lean orchestrator, connecting the web layer to the business logic.
     *   **Impact:**
-        *   **Readability & Separation of Concerns:** The `create` method now fetches questions from the database. The `store` method is extremely simple: it relies on the Form Request for validation and the Service for all business logic, then redirects.
+        *   **Readability:** The `store` method is extremely simple and easy to understand.
+        *   **Separation of Concerns:** The controller's responsibility is now clearly separated from business logic and validation.
 
 **Conclusion:**
 The Placement Test feature has been significantly improved and now aligns with the application's core principles. It is data-driven, maintainable, reliable, and its core logic is fully testable. The controller is lean, and concerns are properly separated between the HTTP, validation, and business logic layers.
@@ -121,22 +124,57 @@ The `AutoGroupingController@store` method was a "Fat Controller" that contained 
 1.  **Created `AutoGroupingService` (app/Services/AutoGroupingService.php):**
     *   **Purpose:** To encapsulate the entire auto-grouping business logic, separating it from the HTTP layer.
     *   **Impact:**
-        *   **Separation of Concerns:** All complex grouping rules, data fetching, and database manipulations are now within a dedicated service.
-        *   **Modularization:** The service's main `handle()` method was broken down into smaller, private, and more focused methods (`clearExistingGroups`, `getAvailableMentors`, `getUnassignedMentees`, `groupMenteesByCriteria`, `assignMentor`, `createMentoringGroup`). This drastically improved readability and maintainability.
-        *   **Reliability:** The service retained the robust `DB::transaction()` and error handling for the entire process.
+        *   **Separation of Concerns:** All complex grouping rules and database manipulations are now within a dedicated service.
+        *   **Readability:** Breaking the logic into smaller, focused private methods (`clearExistingGroups`, `getAvailableMentors`, etc.) drastically improved code clarity.
+        *   **Maintainability:** Business logic is isolated, making it easier and safer to modify.
+        *   **Reliability:** The service retains the robust `DB::transaction()` and error handling for the entire process.
 
 2.  **Refactored `AutoGroupingController` (app/Http/Controllers/Admin/AutoGroupingController.php):**
     *   **Purpose:** To transform the controller into a lean orchestrator.
     *   **Impact:**
-        *   **Readability & Maintainability:** The `store()` method now primarily handles request validation (for `mentees_per_group` and `delete_all_existing`), calls the `AutoGroupingService`, and manages redirection with appropriate feedback messages.
-        *   **User Control:** Passes user-configurable parameters (`menteesPerGroup`, `deleteAllExisting`) to the service.
+        *   **Readability & Maintainability:** The `store()` method is now lean, focusing only on request validation and calling the service.
+        *   **Reliability:** User-configurable parameters, especially the explicit consent for `deleteAllExisting`, are passed to the service, preventing accidental data deletion.
 
 3.  **Refactored `auto-create.blade.php` View:**
     *   **Purpose:** To provide user control over critical grouping parameters and to display detailed results.
     *   **Impact:**
-        *   **User Configuration:** Added an input field for `mentees_per_group`, allowing the admin to dynamically set the desired group size.
-        *   **Safety Feature:** Introduced a checkbox for `delete_all_existing`. This **critical change** requires explicit admin consent to delete existing groups, mitigating the previous data-loss risk.
-        *   **Enhanced Feedback:** Modified the redirection logic and view to display a structured summary of the auto-grouping results (groups created, mentees assigned, mentees remaining ungrouped) directly on the `admin.mentoring-groups.auto-grouping.create` page itself, providing immediate and detailed feedback to the admin.
+        *   **Reliability:** The addition of a checkbox for `delete_all_existing` acts as a critical safety feature, requiring explicit admin consent before performing a destructive operation.
+        *   **Maintainability:** Allowing the admin to set `mentees_per_group` via the UI avoids hardcoded values and the need for code changes to adjust parameters.
+        *   **Readability:** The view now provides a structured summary of the results, making the outcome of the operation clear and transparent to the admin.
 
 **Conclusion:**
 The Auto-Grouping feature has been fundamentally redesigned to align with all core application principles. It is now highly **Reliable** (due to explicit control over destructive operations and robust transaction management), significantly more **Maintainable** and **Readable** (through clear separation of concerns and modularized logic), and effectively **Testable** (allowing for isolated unit testing of the grouping algorithm). The user experience is also improved with greater transparency and control. This refactoring transformed a risky, complex process into a safe, understandable, and robust feature.
+
+---
+
+## Mentee Session Page & Logic Refactoring
+
+**Original State:**
+The `MenteeSessionController` was a "Fat Controller" containing all business logic for fetching mandatory and additional sessions. The logic for "Sesi Tambahan" (Additional Sessions) was functionally unreliable, as it was treated as a group-based feature in the UI but the underlying query and session limits were individual-based, creating confusion and inconsistent behavior. Furthermore, logic was not easily testable in isolation. A bug in `MenteeDashboardController` also caused crashes if attendance data was missing.
+
+**Refactoring Performed:**
+
+1.  **Created `MenteeSessionService` (app/Services/MenteeSessionService.php):**
+    *   **Purpose:** To encapsulate the business logic for fetching a mentee's mandatory and additional sessions.
+    *   **Impact:**
+        *   **Maintainability & Testability:** Logic is now centralized in a service, making it easy to maintain and unit-test in isolation.
+        *   **Reusability:** The service can be reused in any other part of the application that needs to retrieve a mentee's session data.
+
+2.  **Refactored `MenteeSessionController`:**
+    *   **Purpose:** To delegate all data-fetching logic to the new `MenteeSessionService`, making the controller a lean orchestrator.
+    *   **Impact:**
+        *   **Readability & Separation of Concerns:** The controller is now extremely lean, clean, and its responsibility is clearly defined as handling the HTTP request/response cycle.
+
+3.  **Corrected "Sesi Tambahan" (Additional Session) Logic:**
+    *   **Purpose:** To align the feature with its intended individual-based functionality based on user clarification.
+    *   **Impact:**
+        *   **Reliability:** The feature now functions precisely as intended. The query in `MenteeSessionService` correctly fetches sessions per `mentee_id`. The session limit check in `AdditionalSessionController` also correctly validates against the individual mentee's count, making the behavior consistent and predictable.
+        *   **Readability:** The UI text in `mentee.sessions.index.blade.php` was reverted to "Mandiri" (Independent), which clearly communicates the feature's individual nature to the user and developers, eliminating ambiguity.
+
+4.  **Fixed Bug in `MenteeDashboardController`:**
+    *   **Purpose:** To fix a fatal "Attempt to read property 'status' on null" error when calculating attendance statistics.
+    *   **Impact:**
+        *   **Reliability:** The mentee dashboard is now stable and does not crash, even if attendance data is missing for a particular session, improving the overall robustness of the application.
+
+**Conclusion:**
+The Mentee Session page and its related logic have been significantly refactored to fully align with all 6 core principles. The `MenteeSessionController` is now lean and maintainable, with its business logic extracted to a reusable and testable `MenteeSessionService`. The "Sesi Tambahan" feature is now functionally **Reliable** and **Readable**, behaving exactly as intended. The bug fix in the dashboard further enhances the application's stability. This refactoring resolved all identified shortcomings, resulting in cleaner, more robust, and higher-quality code.

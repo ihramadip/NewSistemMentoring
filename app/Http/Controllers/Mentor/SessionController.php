@@ -48,6 +48,16 @@ class SessionController extends Controller
     }
 
     /**
+     * Show the form for selecting a group to create a session for.
+     */
+    public function selectGroupForSession()
+    {
+        $groups = MentoringGroup::where('mentor_id', auth()->id())->get();
+
+        return view('mentor.sessions.select-group', compact('groups'));
+    }
+
+    /**
      * Show the form for creating a new resource.
      */
     public function create(MentoringGroup $group)

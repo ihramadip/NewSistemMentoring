@@ -6,6 +6,14 @@
                     <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v1.755S5.47 5.1 7 5.914V4a1 1 0 112 0v1.914S10.47 5.1 12 5.914V4a1 1 0 112 0v1.914S15.47 5.1 17 5.914V4a1 1 0 112 0v2.414c0 .265-.105.52-.293.707l-2.414 2.414-2.415-2.414a1 1 0 01-.292-.707V4a1 1 0 10-2 0v1.914S10.47 5.1 12 5.914V4a1 1 0 10-2 0v1.914S8.47 5.1 7 5.914V4a1 1 0 00-2 0v1.914S3.47 5.1 2 5.914V3a1 1 0 011-1zm0 8a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zm0 4a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1z" clip-rule="evenodd" />
                 </svg>
             </x-slot>
+            <x-slot name="actions">
+                <a href="{{ route('mentor.sessions.select-group') }}" class="inline-flex items-center px-4 py-2 bg-brand-teal border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:brightness-90 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                    <svg class="h-4 w-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                    </svg>
+                    Tambahkan Sesi
+                </a>
+            </x-slot>
         </x-page-header>
     </x-slot>
 

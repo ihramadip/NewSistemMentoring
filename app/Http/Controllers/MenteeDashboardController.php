@@ -57,7 +57,7 @@ class MenteeDashboardController extends Controller
             
             $totalSessions = $allSessionsForGroup->count();
             $attendedSessions = $allSessionsForGroup->filter(function($session) use ($user) {
-                return $session->attendances->where('mentee_id', $user->id)->first()->status === 'hadir' ?? false;
+                return $session->attendances->where('mentee_id', $user->id)->first()?->status === 'hadir';
             })->count();
             $averageScore = $allSessionsForGroup->flatMap(function($session) use ($user) {
                 return $session->progressReports->where('mentee_id', $user->id);

@@ -43,6 +43,8 @@ class AdditionalSessionController extends Controller
         $mentee = Auth::user();
         $mentoringGroup = $mentee->mentoringGroupsAsMentee()->first();
 
+        $mentoringGroup = $mentee->mentoringGroupsAsMentee()->first();
+
         if (!$mentoringGroup) {
             return redirect()->route('mentee.sessions.index')->with('error', 'Anda tidak tergabung dalam kelompok mentoring manapun.');
         }
