@@ -3,13 +3,21 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\StoreExamRequest;
+use App\Http\Requests\Admin\UpdateExamRequest;
 use App\Models\Exam;
 use App\Models\Level;
-use App\Models\User;
-use Illuminate\Http\Request;
+use App\Services\ExamService;
 
 class ExamController extends Controller
 {
+    protected $examService;
+
+    public function __construct(ExamService $examService)
+    {
+        $this->examService = $examService;
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -31,24 +39,9 @@ class ExamController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreExamRequest $request)
     {
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'level_id' => 'nullable|exists:levels,id',
-            'duration_minutes' => 'nullable|integer|min:1',
-            'published_at' => 'nullable|date',
-        ]);
-
-        $exam = Exam::create([
-            'name' => $validatedData['name'],
-            'description' => $validatedData['description'],
-            'level_id' => $validatedData['level_id'],
-            'duration_minutes' => $validatedData['duration_minutes'],
-            'published_at' => $validatedData['published_at'],
-            'created_by' => auth()->id(), // Assign current user as creator
-        ]);
+        $exam = $this->examService->createExam($request->validated());
 
         return redirect()->route('admin.exams.index')
                          ->with('success', 'Ujian "' . $exam->name . '" berhasil ditambahkan.');
@@ -57,9 +50,10 @@ class ExamController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Exam $exam)
     {
-        //
+        $exam->load(['questions.options']); // Eager load questions and their options
+        return view('admin.exams.show', compact('exam'));
     }
 
     /**
@@ -75,17 +69,9 @@ class ExamController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Exam $exam)
+    public function update(UpdateExamRequest $request, Exam $exam)
     {
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'level_id' => 'nullable|exists:levels,id',
-            'duration_minutes' => 'nullable|integer|min:1',
-            'published_at' => 'nullable|date',
-        ]);
-
-        $exam->update($validatedData);
+        $this->examService->updateExam($exam, $request->validated());
 
         return redirect()->route('admin.exams.index')
                          ->with('success', 'Ujian "' . $exam->name . '" berhasil diperbarui.');
@@ -96,7 +82,7 @@ class ExamController extends Controller
      */
     public function destroy(Exam $exam)
     {
-        $exam->delete();
+        $this->examService->deleteExam($exam);
 
         return redirect()->route('admin.exams.index')
                          ->with('success', 'Ujian "' . $exam->name . '" berhasil dihapus.');

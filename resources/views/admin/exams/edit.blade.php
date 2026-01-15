@@ -83,7 +83,7 @@
                             Tambah Pertanyaan
                         </a>
                     </div>
-                    @include('admin.questions.index', ['exam' => $exam, 'questions' => $exam->questions])
+                    @include('admin.questions._index-partial', ['exam' => $exam, 'questions' => $exam->questions])
                 </div>
             </div>
         </div>

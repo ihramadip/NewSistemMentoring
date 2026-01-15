@@ -53,6 +53,7 @@
                                             @endif
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                            <a href="{{ route('admin.exams.show', $exam) }}" class="text-blue-600 hover:text-blue-900 mr-3">Detail</a>
                                             <a href="{{ route('admin.exams.edit', $exam) }}" class="text-brand-teal hover:text-brand-gold mr-3">Edit</a>
                                             <form action="{{ route('admin.exams.destroy', $exam) }}" method="POST" class="inline-block">
                                                 @csrf

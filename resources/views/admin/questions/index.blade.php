@@ -85,9 +85,11 @@
                         @endforelse
                     </div>
 
-                    <div class="mt-4">
-                        {{ $questions->links() }}
-                    </div>
+                    @if ($questions instanceof \Illuminate\Pagination\AbstractPaginator)
+                        <div class="mt-4">
+                            {{ $questions->links() }}
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

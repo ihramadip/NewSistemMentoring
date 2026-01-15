@@ -9,7 +9,7 @@ The `AuthenticatedSessionController@store` method contained hardcoded `if` state
 
 **Refactoring Performed:**
 
-1.  **Created `RoleBasedRedirector` Service (app/Services/RoleBasedRedirector.php):**
+11.  **Created `RoleBasedRedirector` Service (app/Services/RoleBasedRedirector.php):**
     *   **Purpose:** To centralize the logic for determining the correct dashboard route based on a user's role. It contains a mapping of roles to their respective route names.
     *   **Impact:**
         *   **Maintainability:** To add a new role or change a redirect path, only this service needs to be modified. The `AuthenticatedSessionController` remains untouched.
@@ -17,7 +17,7 @@ The `AuthenticatedSessionController@store` method contained hardcoded `if` state
         *   **Reusability:** The `RoleBasedRedirector` service can be injected and used in any other part of the application that needs to perform role-based redirection.
         *   **Testability:** The redirection logic can now be unit-tested in isolation.
 
-2.  **Refactored `AuthenticatedSessionController` (app/Http/Controllers/Auth/AuthenticatedSessionController.php):**
+12.  **Refactored `AuthenticatedSessionController` (app/Http/Controllers/Auth/AuthenticatedSessionController.php):**
     *   **Purpose:** Simplified the `store` method by delegating the redirection logic to the new `RoleBasedRedirector` service.
     *   **Impact:**
         *   **Separation of Concerns:** The controller is now only responsible for the authentication flow, not for the specifics of where different users should be redirected. This makes the code cleaner and follows the Single Responsibility Principle.
@@ -178,3 +178,130 @@ The `MenteeSessionController` was a "Fat Controller" containing all business log
 
 **Conclusion:**
 The Mentee Session page and its related logic have been significantly refactored to fully align with all 6 core principles. The `MenteeSessionController` is now lean and maintainable, with its business logic extracted to a reusable and testable `MenteeSessionService`. The "Sesi Tambahan" feature is now functionally **Reliable** and **Readable**, behaving exactly as intended. The bug fix in the dashboard further enhances the application's stability. This refactoring resolved all identified shortcomings, resulting in cleaner, more robust, and higher-quality code.
+---
+
+## Exam Management Feature Refactoring
+
+**Original State:**
+The Admin Exam Management feature had a "Fat Controller" tendency. The `Admin\ExamController` handled inline validation and direct business logic for creating, updating, and deleting exams. This reduced the separation of concerns, made the code harder to test in isolation, and was inconsistent with the refactoring patterns already applied to other application features. Furthermore, the feature lacked a dedicated page for viewing exam details, forcing admins to use the edit form for inspection.
+
+**Refactoring Performed:**
+
+1.  **Created `StoreExamRequest` & `UpdateExamRequest` (app/Http/Requests/Admin/):**
+    *   **Purpose:** To centralize and abstract validation logic away from the controller.
+    *   **Impact:**
+        *   **Readable & Maintainable:** The controller is cleaner, and validation rules are now in a dedicated, easy-to-find location.
+        *   **Testable:** Validation logic can be tested in isolation, independent of the controller.
+        *   **Reusable:** The request classes can be reused in any context that requires validating exam data.
+
+2.  **Created `ExamService` (app/Services/ExamService.php):**
+    *   **Purpose:** To encapsulate the core business logic for creating, updating, and deleting exams.
+    *   **Impact:**
+        *   **Separation of Concerns:** The controller's responsibility is now purely orchestration, delegating all business logic to the service.
+        *   **Testable:** The service can be unit-tested in complete isolation from the HTTP layer.
+        *   **Reusable:** The `ExamService` can be injected and reused by other parts of the application (e.g., API endpoints, console commands) that might need to manage exams.
+
+3.  **Refactored `Admin\ExamController`:**
+    *   **Purpose:** To transform the controller into a lean orchestrator that uses Form Requests for validation and the `ExamService` for business logic.
+    *   **Impact:**
+        *   **Readability & Maintainability:** The `store`, `update`, and `destroy` methods are now extremely lean and easy to understand. The controller is no longer concerned with the implementation details of validation or data persistence.
+        *   **Testable:** Testing the controller is simpler, as it only requires mocking the `ExamService` dependency.
+
+4.  **Implemented `show()` Method and View:**
+    *   **Purpose:** To provide a complete CRUD experience by adding a dedicated, read-only page for viewing exam details.
+    *   **Impact:**
+        *   **Reliability & User Experience:** Admins can now view a clear, detailed summary of an exam and its questions without the risk of accidental edits. This improves the workflow and provides a more intuitive interface.
+
+**Conclusion:**
+The Exam Management feature has been significantly refactored to align with the application's core principles. By introducing Form Requests and a Service layer, the feature is now more **Readable**, **Maintainable**, **Reusable**, and **Testable**. The controller is lean, concerns are properly separated, and the implementation of the `show` view improves the feature's overall reliability and usability for the admin. This brings the feature in line with the high-quality standards set by previous refactoring efforts.
+
+---
+
+## Mentee Exam Page UI Bug Fix
+
+**Original State:**
+The `resources/views/mentee/exams/show.blade.php` view had a UI issue where the fixed-position timer bar was overlapping the main page header. This caused a poor user experience and visual clutter.
+
+**Refactoring Performed:**
+
+1.  **Relocated Timer UI:**
+    *   **Purpose:** To integrate the timer bar seamlessly into the main page header, resolving the overlap conflict.
+    *   **Impact:**
+        *   **Reliable & Readable:** The header now displays correctly without overlap, improving the visual consistency and user experience.
+        *   **Maintainable:** The layout is simplified by consolidating all fixed header elements into the `<x-slot name="header">`.
+
+---
+
+## Pagination Error Fix in Question List
+
+**Original State:**
+A `BadMethodCallException` occurred when trying to render pagination links (`->links()`) on a non-paginated Eloquent Collection in `resources/views/admin/questions/index.blade.php`. This happened when the view was included from pages like `admin.exams.edit.blade.php`, which passed a Collection of questions from a relationship rather than a Paginator instance.
+
+**Refactoring Performed:**
+
+1.  **Conditional Pagination Rendering:**
+    *   **Purpose:** To prevent the `->links()` method from being called on objects that do not support pagination.
+    *   **Impact:**
+        *   **Reliable:** The exception is resolved, making the application more robust.
+        *   **Maintainable:** The view now gracefully handles different types of collections (paginated vs. non-paginated) without crashing.
+
+---
+
+## Nested Layout Bug Fix in Question Management Views
+
+**Original State:**
+The `admin.exams.edit.blade.php` view (and also the `admin.exams.show.blade.php` view) was incorrectly including the full `admin.questions.index.blade.php` view. Since `admin.questions.index.blade.php` is itself a full-page view wrapped in `<x-app-layout>`, this resulted in a nested layout structure, causing redundant sidebars, headers, and general UI disarray.
+
+**Refactoring Performed:**
+
+1.  **Created `_index-partial.blade.php` for Question List:**
+    *   **Purpose:** To extract the core question listing and interaction logic into a reusable partial view, free from layout components.
+    *   **Impact:**
+        *   **Reusable:** The question list can now be included in multiple contexts (full page, within other pages) without bringing along extraneous layout elements.
+        *   **Maintainable:** Changes to the question list display only need to be made in one place.
+
+2.  **Updated Parent Views to Use Partial:**
+    *   **Purpose:** To correctly embed the question list without nested layouts.
+    *   **Impact:**
+        *   **Readable & Maintainable:** `admin.exams.edit.blade.php` and `admin.exams.show.blade.php` now correctly include only the content they need, significantly improving their structure and readability.
+        *   **User Experience:** The redundant sidebars and headers are removed, resulting in a clean and expected UI on the admin exam management pages.
+
+3.  **Refactored Original `admin.questions.index.blade.php`:**
+    *   **Purpose:** To ensure `admin.questions.index.blade.php` also uses the newly created partial, maintaining the DRY (Don't Repeat Yourself) principle.
+    *   **Impact:**
+        *   **Maintainable:** The question list rendering logic is fully centralized, reducing redundancy.
+
+**Conclusion:**
+These UI and functional bug fixes significantly improve the reliability, maintainability, and user experience of the exam-related features. By correctly separating layout concerns and handling data types gracefully, the application now presents a consistent and error-free interface for both administrators and mentees.
+
+---
+
+## Mentee Exam Submission Robustness Improvements
+
+**Original State:**
+The mentee exam submission process (`MenteeExamController@store`) had several vulnerabilities under concurrent load:
+-   **Race Condition for Re-submission:** The `exists()` check to prevent re-submission was prone to race conditions, potentially leading to duplicate `ExamSubmission` records.
+-   **Data Inconsistency Risk:** Lack of a database transaction meant that if an error occurred during the submission process, an `ExamSubmission` could be created without all its associated `SubmissionAnswer`s.
+-   **Performance Bottleneck:** Synchronous scoring logic could cause slow response times or timeouts under heavy concurrent submissions.
+
+**Refactoring Performed:**
+
+1.  **Added Unique Constraint to `exam_submissions` Table:**
+    *   **Purpose:** To enforce database-level uniqueness for `(mentee_id, exam_id)`, preventing duplicate exam submissions even under race conditions.
+    *   **Impact:**
+        *   **Reliable:** Provides the most robust protection against duplicate submissions, ensuring data integrity.
+
+2.  **Implemented Database Transaction for Submission:**
+    *   **Purpose:** To ensure atomicity of the exam submission process. All related database operations (creating `ExamSubmission` and all `SubmissionAnswer`s) are treated as a single unit of work.
+    *   **Impact:**
+        *   **Reliable:** Guarantees data consistency; either all submission data is saved, or none is. Prevents orphaned or incomplete submission records.
+
+3.  **Offloaded Scoring to Queued Job (`GradeExamSubmission`):**
+    *   **Purpose:** To perform the computationally intensive scoring logic asynchronously, outside the main HTTP request-response cycle.
+    *   **Impact:**
+        *   **Scalable:** Significantly improves the application's ability to handle many concurrent exam submissions without degrading response times.
+        *   **Reliable:** The HTTP request completes quickly, allowing the user to receive immediate feedback, while the grading happens in the background. Failures in grading can be retried by the queue worker without affecting the user's interaction.
+        *   **Maintainable:** Separates the scoring logic from the controller, making both easier to manage.
+
+**Conclusion:**
+These improvements to the mentee exam submission process fundamentally enhance its **Reliability** and **Scalability**. By preventing race conditions, ensuring data consistency with transactions, and offloading heavy processing to queues, the system is now robustly equipped to handle high volumes of concurrent exam submissions without compromising performance or data integrity.

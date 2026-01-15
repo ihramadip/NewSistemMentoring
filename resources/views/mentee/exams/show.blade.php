@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout x-data="timer({{ $exam->duration_minutes ?? 0 }})" x-init="startTimer()">
     <x-slot name="header">
         <x-page-header title="{{ __('Ujian: ' . $exam->name) }}" subtitle="Jawab semua pertanyaan dengan seksama.">
             <x-slot name="icon">
@@ -6,23 +6,20 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12H12m-2.25 4.5H12M12 18.75V15m-1.5 2.25l-1.5-1.5m1.5 1.5l1.5-1.5M12 18.75L10.5 17.25M12 18.75L13.5 17.25M12 14.25h-2.25M15 11.25H9M15 12h-2.25" />
                 </svg>
             </x-slot>
-        </x-page-header>
-    </x-slot>
-
-    <div x-data="timer({{ $exam->duration_minutes ?? 0 }})" x-init="startTimer()" class="py-12">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-
-            <!-- Timer bar -->
-            <div class="fixed top-16 right-0 left-0 lg:left-64 bg-white dark:bg-gray-800 p-3 border-b border-gray-200 dark:border-gray-700 shadow-md z-10">
-                <div class="max-w-4xl mx-auto flex justify-between items-center">
-                    <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Sisa Waktu</h4>
-                    <div class="text-xl font-bold px-4 py-2 rounded-lg" :class="{ 'text-red-500': minutes < 5, 'text-gray-800 dark:text-gray-200': minutes >= 5 }">
+            <x-slot name="actions">
+                <div class="flex items-center space-x-4">
+                    <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200 hidden md:block">Sisa Waktu</h4>
+                    <div class="text-xl font-bold px-4 py-2 rounded-lg" :class="{ 'text-red-500': minutes < 5, 'text-gray-800 dark:text-gray-200': minutes >= 5, 'bg-gray-100 dark:bg-gray-700': minutes >= 5, 'bg-red-100 dark:bg-red-700/50': minutes < 5 }">
                         <span x-text="minutes.toString().padStart(2, '0')"></span>:<span x-text="seconds.toString().padStart(2, '0')"></span>
                     </div>
                 </div>
-            </div>
+            </x-slot>
+        </x-page-header>
+    </x-slot>
 
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mt-16">
+    <div class="py-12">
+        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     <h3 class="text-2xl font-bold text-gray-900 mb-2">{{ $exam->name }}</h3>
                     <p class="text-gray-600 mb-6">

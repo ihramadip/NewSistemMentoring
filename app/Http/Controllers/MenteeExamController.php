@@ -7,6 +7,8 @@ use App\Models\ExamSubmission;
 use App\Models\PlacementTest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use App\Jobs\GradeExamSubmission; // Import the job
 use Carbon\Carbon;
 
 class MenteeExamController extends Controller
@@ -68,7 +70,10 @@ class MenteeExamController extends Controller
     {
         $user = Auth::user();
 
-        // Prevent re-submission
+        // The unique constraint on (mentee_id, exam_id) in the database
+        // will now handle preventing re-submission more robustly.
+        // We can keep this check for a user-friendly message,
+        // but the database will ultimately enforce uniqueness.
         if (ExamSubmission::where('mentee_id', $user->id)->where('exam_id', $exam->id)->exists()) {
             return redirect()->route('mentee.exams.index')->with('warning', 'Anda sudah pernah mengikuti ujian ini.');
         }
@@ -83,43 +88,34 @@ class MenteeExamController extends Controller
 
         $exam->load('questions.options'); // Load questions and their options for scoring
 
-        $totalScore = 0;
+        $submission = null; // Initialize submission outside the closure
 
-        // Create ExamSubmission
-        $submission = ExamSubmission::create([
-            'mentee_id' => $user->id,
-            'exam_id' => $exam->id,
-            'submitted_at' => Carbon::now(),
-            'status' => 'submitted', // Will be updated to 'graded' after admin review
-        ]);
+        DB::transaction(function () use ($user, $exam, $validatedData, &$submission) {
+            // Create ExamSubmission
+            $submission = ExamSubmission::create([
+                'mentee_id' => $user->id,
+                'exam_id' => $exam->id,
+                'submitted_at' => Carbon::now(),
+                'status' => 'submitted', // Will be updated to 'graded' after admin review
+                'total_score' => 0, // Initialize score to 0; job will update it
+            ]);
 
-        foreach ($validatedData['answers'] as $answerData) {
-            $question = $exam->questions->find($answerData['question_id']);
-            $score = 0;
+            foreach ($validatedData['answers'] as $answerData) {
+                $question = $exam->questions->find($answerData['question_id']);
 
-            if ($question) {
-                if ($question->question_type === 'multiple_choice' && isset($answerData['chosen_option_id'])) {
-                    $chosenOption = $question->options->find($answerData['chosen_option_id']);
-                    if ($chosenOption && $chosenOption->is_correct) {
-                        $score = $question->score_value;
-                    }
-                } elseif ($question->question_type === 'essay' || $question->question_type === 'audio_response') {
-                    // Essay/audio questions will be graded manually by admin, score defaults to 0 for now
-                    $score = 0; 
+                if ($question) {
+                    $submission->answers()->create([
+                        'question_id' => $question->id,
+                        'chosen_option_id' => $answerData['chosen_option_id'] ?? null,
+                        'answer_text' => $answerData['answer_text'] ?? null,
+                        'score' => 0, // Score initialized to 0; job will update it
+                    ]);
                 }
-                $totalScore += $score;
-
-                $submission->answers()->create([
-                    'question_id' => $question->id,
-                    'chosen_option_id' => $answerData['chosen_option_id'] ?? null,
-                    'answer_text' => $answerData['answer_text'] ?? null,
-                    'score' => $score,
-                ]);
             }
-        }
 
-        // Update total score for submission (only includes auto-graded MCQs)
-        $submission->update(['total_score' => $totalScore]);
+            // Dispatch job to grade the submission asynchronously
+            GradeExamSubmission::dispatch($submission);
+        });
 
         return redirect()->route('mentee.exams.completed')->with('success', 'Ujian Anda telah berhasil dikirimkan. Silakan tunggu hasil penilaian.');
     }
