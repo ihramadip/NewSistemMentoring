@@ -7,15 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 class Question extends Model
 {
     protected $fillable = [
-        'exam_id',
+        'questionable_id',
+        'questionable_type',
         'question_text',
         'question_type',
         'score_value',
     ];
 
-    public function exam()
+    public function questionable()
     {
-        return $this->belongsTo(Exam::class);
+        return $this->morphTo();
     }
 
     public function options()

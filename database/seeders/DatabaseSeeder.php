@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
         $this->call(RoleSeeder::class);
         $this->call(FacultySeeder::class);
         $this->call(LevelSeeder::class);
+        $this->call(PlacementTestQuestionSeeder::class);
 
         // Get roles
         $adminRole = Role::where('name', 'Admin')->first();

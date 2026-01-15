@@ -31,6 +31,6 @@ class Exam extends Model
 
     public function questions()
     {
-        return $this->hasMany(Question::class);
+        return $this->morphMany(Question::class, 'questionable');
     }
 }

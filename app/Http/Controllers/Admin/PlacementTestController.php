@@ -74,13 +74,12 @@ class PlacementTestController extends Controller
      */
     public function update(Request $request, PlacementTest $placementTest)
     {
-        $request->validate([
+        $validatedData = $request->validate([
             'audio_reading_score' => ['nullable', 'integer', 'min:0', 'max:100'],
-            'theory_score' => ['nullable', 'integer', 'min:0', 'max:100'],
             'final_level_id' => ['nullable', 'exists:levels,id'],
         ]);
 
-        $placementTest->update($request->all());
+        $placementTest->update($validatedData);
 
         return redirect()->route('admin.placement-tests.index')
                          ->with('success', 'Placement test result for ' . $placementTest->mentee->name . ' updated successfully.');

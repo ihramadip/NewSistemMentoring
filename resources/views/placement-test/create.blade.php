@@ -45,14 +45,14 @@
                         <div class="border-t border-gray-200 mt-8 pt-6">
                             <h4 class="text-xl font-semibold mb-4">Bagian 2: Tes Teori Tajwid</h4>
                             <div class="space-y-6">
-                                @foreach($questions as $id => $questionData)
+                                @foreach($questions as $question)
                                     <fieldset>
-                                        <legend class="text-base font-medium text-gray-900">{{ $loop->iteration }}. {{ $questionData['question'] }}</legend>
+                                        <legend class="text-base font-medium text-gray-900">{{ $loop->iteration }}. {{ $question->question_text }}</legend>
                                         <div class="mt-4 space-y-2">
-                                            @foreach($questionData['options'] as $option)
+                                            @foreach($question->options as $option)
                                                 <div class="flex items-center">
-                                                    <input id="question-{{ $id }}-{{ $loop->index }}" name="answers[{{ $id }}]" type="radio" value="{{ $option }}" class="focus:ring-brand-teal h-4 w-4 text-brand-teal border-gray-300" required>
-                                                    <label for="question-{{ $id }}-{{ $loop->index }}" class="ml-3 block text-sm text-gray-700">{{ $option }}</label>
+                                                    <input id="question-{{ $question->id }}-{{ $loop->index }}" name="answers[{{ $question->id }}]" type="radio" value="{{ $option->option_text }}" class="focus:ring-brand-teal h-4 w-4 text-brand-teal border-gray-300" required>
+                                                    <label for="question-{{ $question->id }}-{{ $loop->index }}" class="ml-3 block text-sm text-gray-700">{{ $option->option_text }}</label>
                                                 </div>
                                             @endforeach
                                         </div>

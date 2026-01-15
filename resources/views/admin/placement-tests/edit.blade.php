@@ -51,9 +51,11 @@
 
                             <!-- Theory Score -->
                             <div>
-                                <x-input-label for="theory_score" :value="__('Theory Score (0-100)')" />
-                                <x-text-input id="theory_score" name="theory_score" type="number" class="mt-1 block w-full" :value="old('theory_score', $placementTest->theory_score)" min="0" max="100" />
-                                <x-input-error class="mt-2" :messages="$errors->get('theory_score')" />
+                                <x-input-label for="theory_score" :value="__('Theory Score (Automatic)')" />
+                                <div class="mt-1 block w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md shadow-sm">
+                                    {{ $placementTest->theory_score ?? 'N/A' }}
+                                </div>
+                                <p class="mt-1 text-sm text-gray-500">This score is calculated automatically from the multiple-choice questions.</p>
                             </div>
 
                             <!-- Final Level -->

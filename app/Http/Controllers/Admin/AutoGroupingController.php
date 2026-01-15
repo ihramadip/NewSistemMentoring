@@ -7,16 +7,18 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\MentoringGroup;
 use App\Models\GroupMember;
-use App\Models\Session;
-use App\Models\Attendance;
-use App\Models\ProgressReport;
-use App\Models\SubmissionAnswer;
-use App\Models\ExamSubmission;
-use App\Models\PlacementTest;
+use App\Services\AutoGroupingService;
 use Illuminate\Support\Facades\DB;
 
 class AutoGroupingController extends Controller
 {
+    protected $autoGroupingService;
+
+    public function __construct(AutoGroupingService $autoGroupingService)
+    {
+        $this->autoGroupingService = $autoGroupingService;
+    }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -32,13 +34,15 @@ class AutoGroupingController extends Controller
             ->whereDoesntHave('mentoringGroupsAsMentor')
             ->count();
             
-        $menteesPerGroup = 14;
-        $estimatedGroups = $unassignedMenteesCount > 0 ? ceil($unassignedMenteesCount / $menteesPerGroup) : 0;
+        $menteesPerGroupDefault = 14; // Default value, can be made configurable
+
+        $estimatedGroups = $unassignedMenteesCount > 0 ? ceil($unassignedMenteesCount / $menteesPerGroupDefault) : 0;
 
         return view('admin.mentoring-groups.auto-create', compact(
             'unassignedMenteesCount',
             'availableMentorsCount',
-            'estimatedGroups'
+            'estimatedGroups',
+            'menteesPerGroupDefault'
         ));
     }
 
@@ -47,123 +51,46 @@ class AutoGroupingController extends Controller
      */
     public function store(Request $request)
     {
-        DB::beginTransaction();
+        $request->validate([
+            'mentees_per_group' => ['required', 'integer', 'min:1'],
+            'delete_all_existing' => ['boolean'],
+        ]);
+
+        $menteesPerGroup = $request->input('mentees_per_group');
+        $deleteAllExisting = $request->boolean('delete_all_existing');
+
         try {
-            // Ensure clean start: Delete existing groups and group members
-            GroupMember::query()->delete();
-            MentoringGroup::query()->delete();
+            $results = $this->autoGroupingService->handle($menteesPerGroup, $deleteAllExisting);
 
-            // 1. Get available mentors more efficiently
-            $assignedMentorIds = MentoringGroup::pluck('mentor_id')->unique();
-            $availableMentors = User::where('role_id', 2) // Mentor
-                ->whereNotIn('id', $assignedMentorIds)
-                ->get();
+            $groupsCreatedCount = $results['groups_created'];
+            $menteesAssignedCount = $results['mentees_assigned'];
+            $mentorsAssignedCount = $results['mentors_assigned'];
+            $mentorsExhausted = $results['mentors_exhausted'];
+            $totalUnassignedMenteesInitial = $results['total_unassigned_mentees_initial'];
 
-            // 2. Get unassigned mentees more efficiently
-            $assignedMenteeIds = GroupMember::pluck('mentee_id')->unique();
-            $unassignedMentees = User::where('role_id', 3) // Mentee
-                ->whereNotIn('id', $assignedMenteeIds)
-                ->with(['faculty', 'placementTest.finalLevel'])
-                ->get();
-
-            // dd($unassignedMentees->count(), $availableMentors->count());
-
-            if ($availableMentors->isEmpty()) {
-                return redirect()->route('admin.mentoring-groups.auto-grouping.create')->with('warning', 'Tidak ada mentor yang tersedia untuk ditugaskan.');
-            }
-            if ($unassignedMentees->isEmpty()) {
-                return redirect()->route('admin.mentoring-groups.auto-grouping.create')->with('warning', 'Tidak ada mentee yang perlu dikelompokkan.');
-            }
-
-            // 2. Group mentors by faculty for prioritized assignment
-            $mentorsByFaculty = $availableMentors->groupBy('faculty_id');
-            // Create a general pool of mentors for when a faculty runs out
-            $generalMentorPool = $availableMentors->shuffle();
-
-
-            // 3. Group mentees by a composite key: faculty, level, and gender
-            $groupedMentees = $unassignedMentees->groupBy(function ($mentee) {
-                $facultyId = $mentee->faculty_id ?? 'unknown';
-                $levelId = $mentee->placementTest->final_level_id ?? 'unknown';
-                $gender = $mentee->gender ?? 'unknown';
-                return "{$facultyId}_{$levelId}_{$gender}";
-            });
-
-            $menteesPerGroup = 14;
-            $groupsCreatedCount = 0;
-            $menteesAssignedCount = 0;
-            
-            // 4. Iterate through each group and create mentoring groups
-            foreach ($groupedMentees as $key => $menteesInGroup) {
-                // Extract details from the group key
-                list($facultyId, $levelId, $gender) = explode('_', $key);
-
-                $chunks = $menteesInGroup->chunk($menteesPerGroup);
-
-                foreach ($chunks as $chunk) {
-                    // --- New Mentor Assignment Logic ---
-                    $mentor = null;
-                    
-                    // a. Try to get a mentor from the same faculty
-                    if (isset($mentorsByFaculty[$facultyId]) && $mentorsByFaculty[$facultyId]->isNotEmpty()) {
-                        $mentor = $mentorsByFaculty[$facultyId]->shift();
-                        // Also remove this mentor from the general pool to avoid double assignment
-                        $generalMentorPool = $generalMentorPool->reject(fn($m) => $m->id === $mentor->id);
-                    } 
-                    // b. If no mentor in the same faculty, get from the general pool
-                    elseif ($generalMentorPool->isNotEmpty()) {
-                        $mentor = $generalMentorPool->shift();
-                        // Also remove this mentor from his original faculty group if he exists there
-                        if(isset($mentorsByFaculty[$mentor->faculty_id])) {
-                           $mentorsByFaculty[$mentor->faculty_id] = $mentorsByFaculty[$mentor->faculty_id]->reject(fn($m) => $m->id === $mentor->id);
-                        }
-                    } 
-                    // c. If no mentors are available at all, stop the process
-                    else {
-                        break 2; // Break out of both foreach loops
-                    }
-                    // --- End of New Logic ---
-                    
-                    $firstMentee = $chunk->first();
-                    $facultyName = $firstMentee->faculty->name ?? 'Unknown Faculty';
-                    $levelName = $firstMentee->placementTest->finalLevel->name ?? 'Unknown Level';
-                    $genderName = $gender === 'male' ? 'Ikhwan' : 'Akhwat';
-                    
-                    $group = MentoringGroup::create([
-                        'mentor_id' => $mentor->id,
-                        'name' => "{$levelName} - {$facultyName} - {$genderName} - " . ($groupsCreatedCount + 1),
-                        'level_id' => $levelId,
-                    ]);
-                    $groupsCreatedCount++;
-
-                    // 6. Assign mentees to the new group
-                    $groupMembersData = [];
-                    foreach ($chunk as $mentee) {
-                        $groupMembersData[] = [
-                            'mentee_id' => $mentee->id,
-                            'mentoring_group_id' => $group->id,
-                            'created_at' => now(),
-                            'updated_at' => now(),
-                        ];
-                    }
-                    GroupMember::insert($groupMembersData);
-                    $menteesAssignedCount += count($groupMembersData);
-                }
-            }
-
-            DB::commit();
-
-            $mentorsAssignedCount = $groupsCreatedCount;
             $message = "Berhasil membuat {$groupsCreatedCount} kelompok baru. {$menteesAssignedCount} mentee telah ditugaskan ke dalam kelompok dengan {$mentorsAssignedCount} mentor.";
             
-            if ($generalMentorPool->isEmpty() && $menteesAssignedCount < $unassignedMentees->count()) {
-                $message .= " Proses berhenti karena mentor yang tersedia telah habis.";
+            $unassignedRemaining = $totalUnassignedMenteesInitial - $menteesAssignedCount;
+            $successMessage = 'Proses pengelompokan otomatis telah selesai.';
+
+            if ($mentorsExhausted && $unassignedRemaining > 0) {
+                $warningMessage = "Proses berhenti karena mentor yang tersedia telah habis dan {$unassignedRemaining} mentee belum mendapatkan kelompok.";
+            } else if ($unassignedRemaining > 0) {
+                 $warningMessage = "Terdapat {$unassignedRemaining} mentee yang belum mendapatkan kelompok.";
             }
 
-            return redirect()->route('admin.mentoring-groups.index')->with('success', $message);
+            $redirect = redirect()->route('admin.mentoring-groups.auto-grouping.create')
+                ->with('success', $successMessage)
+                ->with('grouping_results', [
+                    'groups_created' => $groupsCreatedCount,
+                    'mentees_assigned' => $menteesAssignedCount,
+                    'unassigned_remaining' => $unassignedRemaining,
+                    'warning' => $warningMessage ?? null,
+                ]);
+
+            return $redirect;
 
         } catch (\Exception $e) {
-            DB::rollBack();
             return redirect()->route('admin.mentoring-groups.auto-grouping.create')->with('danger', 'Terjadi kesalahan saat membuat kelompok: ' . $e->getMessage());
         }
     }
