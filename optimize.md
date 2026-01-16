@@ -305,3 +305,45 @@ The mentee exam submission process (`MenteeExamController@store`) had several vu
 
 **Conclusion:**
 These improvements to the mentee exam submission process fundamentally enhance its **Reliability** and **Scalability**. By preventing race conditions, ensuring data consistency with transactions, and offloading heavy processing to queues, the system is now robustly equipped to handle high volumes of concurrent exam submissions without compromising performance or data integrity.
+
+---
+
+## Statistic Feature Refactoring
+
+**Original State:**
+The `StatisticController` was a "Fat Controller" that single-handedly managed the entire statistics and reporting page. It violated multiple core principles:
+- **Massive Complexity:** The `index` method was over 400 lines long, containing dozens of complex database queries (both Eloquent and raw DB), and extensive in-memory data manipulation and transformation logic.
+- **Poor Readability & Maintainability:** The sheer size and scope of the method made it extremely difficult to read, debug, or safely modify. Changing one statistic carried a high risk of breaking another.
+- **No Reusability:** None of the statistical calculations (e.g., mentor activity, group performance) could be reused in other parts of the application (like an API or PDF report) without duplicating hundreds of lines of code.
+- **Untestable:** The business logic was impossible to unit test in isolation, requiring complex and brittle feature tests to ensure correctness.
+- **Inefficient Caching Strategy:** It attempted to cache request-dependent data (like search and pagination results), which is an incorrect use of caching and leads to bugs.
+
+**Refactoring Performed:**
+
+1.  **Created a Dedicated Service Layer (app/Services/Statistic/):**
+    *   **Purpose:** To break down the monolithic controller into smaller, single-responsibility services, each handling a specific domain of statistics.
+    *   **Impact:**
+        *   **Separation of Concerns:** Logic is now cleanly separated. The controller orchestrates, and the services execute the business logic.
+        *   **Testability:** Each service can be unit-tested in isolation, guaranteeing the correctness of its calculations.
+        *   **Reusability:** Each statistical calculation is now a reusable service that can be called from anywhere in the application.
+    *   **Services Created:**
+        *   `DemographicStatisticService`: For faculty and program study stats.
+        *   `LevelStatisticService`: For level distribution and the effectiveness matrix.
+        *   `ComparisonStatisticService`: For comparing scores between different exams.
+        *   `ProgressionStatisticService`: For tracking score and level progression.
+        *   `AttendanceStatisticService`: For all attendance-related data.
+        *   `PerformanceStatisticService`: For mentor activity and group performance.
+        *   `IndividualStatisticService`: For handling the searchable and paginated individual mentee analysis.
+
+2.  **Refactored `StatisticController`:**
+    *   **Purpose:** To transform the controller into a lean orchestrator.
+    *   **Impact:**
+        *   **Readability & Maintainability:** The `index` method is now short, clean, and its only responsibility is to call the relevant services, assemble the data, and pass it to the view. It is vastly easier to understand and maintain.
+
+3.  **Corrected Caching Strategy:**
+    *   **Purpose:** To cache data correctly and efficiently.
+    *   **Impact:**
+        *   **Reliability:** The controller now caches only the general, heavy statistics that are the same for all users. Request-specific data that depends on search and pagination (`IndividualStatisticService`) is correctly executed on every request, fixing bugs related to stale search results. This improves both performance and reliability.
+
+**Conclusion:**
+The Statistic feature has been completely overhauled to align with all 6 core principles. The "Fat Controller" has been eliminated and replaced with a clean, modular, and service-oriented architecture. The feature is now significantly more **Readable**, **Maintainable**, **Reusable**, and **Testable**. The improved caching strategy also enhances its **Reliability** and **Scalability**. This refactoring brings a complex and critical feature up to the high-quality standards established throughout the rest of the application.
