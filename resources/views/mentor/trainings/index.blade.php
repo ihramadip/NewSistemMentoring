@@ -1,3 +1,7 @@
+@php
+/** @var \App\Models\User $user */
+$user = Auth::user();
+@endphp
 <x-app-layout>
     <x-slot name="header">
         <x-page-header title="{{ __('Pelatihan Mentor') }}" subtitle="Manajemen TFM (Training for Mentor) dan Diklat Pementor.">
@@ -6,6 +10,13 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M4.098 19.902a3.75 3.75 0 005.304 0l6.401-6.402M6.75 21A3.75 3.75 0 013 17.25V4.125C3 3.504 3.504 3 4.125 3h5.25c.621 0 1.125.504 1.125 1.125v4.072M10.5 21A3.75 3.75 0 0014.25 17.25V4.125C14.25 3.504 14.754 3 15.375 3h5.25c.621 0 1.125.504 1.125 1.125v13.125v0c0 1.025-.56 1.905-1.381 2.398M16.5 21V6" />
                 </svg>
             </x-slot>
+            <x-slot name="actions">
+                @if($user->role && $user->role->name === 'Admin')
+                <x-primary-button href="{{ route('admin.mentor-trainings.create') }}" class="inline-flex items-center px-4 py-2 bg-brand-teal border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:brightness-90 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                    {{ __('Tambah Pelatihan') }}
+                </x-primary-button>
+                @endif
+            </x-slot>
         </x-page-header>
     </x-slot>
 
@@ -13,13 +24,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    @if(Auth::user()->role->name === 'Admin')
-                    <div class="flex justify-end mb-6">
-                        <a href="{{ route('admin.mentor-trainings.create') }}" class="inline-flex items-center px-4 py-2 bg-brand-teal border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:brightness-90 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                            Tambah Pelatihan
-                        </a>
-                    </div>
-                    @endif
+                    
 
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200">
@@ -33,7 +38,7 @@
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Waktu</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Materi</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tes</th>
-                                    @if(Auth::user()->role->name === 'Admin')
+                                    @if($user->role && $user->role->name === 'Admin')
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                                     @endif
                                 </tr>
@@ -61,7 +66,7 @@
                                                 -
                                             @endif
                                         </td>
-                                        @if(Auth::user()->role->name === 'Admin')
+                                        @if($user->role && $user->role->name === 'Admin')
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                             <a href="{{ route('admin.mentor-trainings.edit', $training) }}" class="text-indigo-600 hover:text-indigo-900">Edit</a>
                                             <span class="mx-1 text-gray-300">|</span>

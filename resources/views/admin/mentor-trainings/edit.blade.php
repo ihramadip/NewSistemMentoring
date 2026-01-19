@@ -13,7 +13,7 @@
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 md:p-8 text-gray-900">
-                    <form action="{{ route('mentor.trainings.update', $training) }}" method="POST" class="space-y-6">
+                    <form action="{{ route('admin.mentor-trainings.update', $training) }}" method="POST" class="space-y-6">
                         @csrf
                         @method('PUT')
 
@@ -70,7 +70,7 @@
                         </div>
                         
                         <div class="flex items-center justify-end mt-6">
-                            <a href="{{ route('mentor.trainings.index') }}" class="text-sm text-gray-600 hover:text-gray-900 mr-4">
+                            <a href="{{ route('admin.mentor-trainings.index') }}" class="text-sm text-gray-600 hover:text-gray-900 mr-4">
                                 Batal
                             </a>
                             <x-primary-button>

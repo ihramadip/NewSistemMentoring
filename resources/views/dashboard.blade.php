@@ -1,4 +1,6 @@
+{{-- Layout utama untuk halaman dashboard mentee --}}
 <x-app-layout>
+    {{-- Slot header untuk menampilkan judul halaman --}}
     <x-slot name="header">
         <x-page-header title="{{ __('Dashboard Mentee') }}" subtitle="Ringkasan dan akses cepat ke semua informasi mentoring Anda.">
             <x-slot name="icon">
@@ -9,12 +11,18 @@
         </x-page-header>
     </x-slot>
 
+    {{-- Container utama halaman --}}
     <div class="py-12">
+        {{-- Container dengan lebar maksimum dan margin horizontal otomatis --}}
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            {{-- Card utama dengan background putih dan shadow --}}
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                {{-- Area konten utama --}}
                 <div class="p-6 text-gray-900">
+                    {{-- Judul selamat datang --}}
                     <h3 class="text-2xl font-bold text-gray-800 mb-6 border-b pb-2">Selamat Datang, <span class="text-brand-teal">{{ $user->name }}!</span></h3>
 
+                    {{-- Area untuk menampilkan pesan flash (status, success, error, warning) --}}
                     @if(session('status'))
                         <div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded relative mb-4" role="alert">
                             <span class="block sm:inline">{{ session('status') }}</span>
@@ -36,9 +44,10 @@
                         </div>
                     @endif
 
+                    {{-- Grid untuk card-card informasi --}}
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
-                        <!-- My Level / Placement Test Status Card -->
+                        {{-- Card Status Tes Penempatan --}}
                         <div class="bg-gray-50 border border-gray-200 rounded-lg shadow-sm p-6 flex flex-col justify-between hover:shadow-md transition-shadow duration-200">
                             <div>
                                 <div class="flex items-center mb-3">
@@ -69,7 +78,7 @@
                             </div>
                         </div>
 
-                        <!-- My Mentoring Group Card -->
+                        {{-- Card Kelompok Mentoring --}}
                         <div class="bg-gray-50 border border-gray-200 rounded-lg shadow-sm p-6 flex flex-col justify-between hover:shadow-md transition-shadow duration-200">
                             <div>
                                 <div class="flex items-center mb-3">
@@ -92,7 +101,7 @@
                             </div>
                         </div>
 
-                        <!-- Overall Progress Summary Card -->
+                        {{-- Card Ringkasan Progres --}}
                         <div class="bg-gray-50 border border-gray-200 rounded-lg shadow-sm p-6 flex flex-col justify-between hover:shadow-md transition-shadow duration-200">
                             <div>
                                 <div class="flex items-center mb-3">
@@ -115,7 +124,7 @@
                             </div>
                         </div>
 
-                        <!-- Latest Announcements Card -->
+                        {{-- Card Pengumuman Terbaru --}}
                         <div class="bg-gray-50 border border-gray-200 rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow duration-200 md:col-span-2 lg:col-span-1">
                             <div>
                                 <div class="flex items-center mb-3">
@@ -138,7 +147,7 @@
                             </div>
                         </div>
 
-                        <!-- Upcoming Sessions Card -->
+                        {{-- Card Sesi Mendatang --}}
                         <div class="bg-gray-50 border border-gray-200 rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow duration-200">
                             <div>
                                 <div class="flex items-center mb-3">
@@ -162,7 +171,7 @@
                         </div>
                     </div>
 
-                    <!-- Quick Links Section -->
+                    {{-- Bagian Akses Cepat --}}
                     <div class="mt-10 p-6 bg-brand-teal/10 rounded-lg shadow-sm">
                         <h4 class="text-xl font-bold text-brand-ink mb-4">Akses Cepat</h4>
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
