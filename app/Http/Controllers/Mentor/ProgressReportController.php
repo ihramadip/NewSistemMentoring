@@ -113,4 +113,47 @@ class ProgressReportController extends Controller
         // Return view dengan daftar mentee dan statistik mereka
         return view('mentor.reports.index', compact('mentees'));
     }
+
+    public function show(User $mentee)
+    {
+        // Eager load relasi yang diperlukan
+        $mentee->load('progressReports.session', 'attendances.session', 'mentoringGroupsAsMentee');
+
+        // Ambil grup mentee
+        $menteeGroup = $mentee->mentoringGroupsAsMentee->first();
+        if (!$menteeGroup) {
+            abort(404, 'Mentee tidak terdaftar dalam grup manapun.');
+        }
+        
+        // Ambil semua sesi untuk grup tersebut
+        $sessions = Session::where('mentoring_group_id', $menteeGroup->id)
+            ->orderBy('date', 'desc')
+            ->get();
+
+        // Ambil semua laporan progres dan kehadiran mentee
+        $progress_reports = $mentee->progressReports;
+        $attendances = $mentee->attendances;
+
+        // Hitung statistik
+        $scores = $progress_reports->pluck('score')->filter();
+        $average_score = $scores->isNotEmpty() ? round($scores->avg()) : 'N/A';
+        $reports_count = $progress_reports->count();
+
+        $present_count = $attendances->where('status', 'hadir')->count();
+        $total_sessions = $sessions->count();
+        $attendance_rate = $total_sessions > 0 ? round(($present_count / $total_sessions) * 100) : 0;
+
+        // Return view dengan data yang diperlukan
+        return view('mentor.reports.show', compact(
+            'mentee',
+            'sessions',
+            'progress_reports',
+            'attendances',
+            'average_score',
+            'reports_count',
+            'present_count',
+            'total_sessions',
+            'attendance_rate'
+        ));
+    }
 }

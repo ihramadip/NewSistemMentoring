@@ -69,7 +69,7 @@ Route::prefix('mentor')->name('mentor.')->middleware(['auth', 'mentor'])->group(
     Route::resource('sessions', \App\Http\Controllers\Mentor\SessionController::class);
 
     // Rute resource untuk laporan progres
-    Route::resource('reports', \App\Http\Controllers\Mentor\ProgressReportController::class);
+    Route::resource('reports', \App\Http\Controllers\Mentor\ProgressReportController::class)->parameters(['reports' => 'mentee']);
 
     // Rute untuk pelatihan mentor
     Route::get('trainings', [\App\Http\Controllers\Admin\MentorTrainingController::class, 'index'])->name('trainings.index');
